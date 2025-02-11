@@ -1,0 +1,176 @@
+/* Estilos generales */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #e3f2fd; /* Fondo azul claro */
+    color: #0d47a1; /* Texto azul oscuro */
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: #1565c0; /* Azul medio */
+  }
+  
+  /* Contenedor principal */
+  #app {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    gap: 20px;
+  }
+  
+  /* Columna de botones y contador */
+  #botones-container {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  /* Columna del bus */
+  #bus-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  #bus-image {
+    width: 200px;
+    height: auto;
+    margin-bottom: 10px;
+  }
+  
+  /* Estilos para los grupos de botones */
+  .button-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  /* Estilos para los botones principales */
+  button.purchasable {
+    background-color: #1976d2; /* Azul principal */
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  button.purchasable:hover {
+    background-color: #1565c0; /* Azul más oscuro al hacer hover */
+    transform: translateY(-2px);
+  }
+  
+  button.purchasable:active {
+    transform: translateY(0);
+  }
+  
+  button.purchasable:disabled {
+    background-color: #90caf9; /* Azul claro para botones deshabilitados */
+    cursor: not-allowed;
+  }
+  
+  /* Estilos para los botones de mejora */
+  .upgrade-button {
+    background-color: #42a5f5; /* Azul claro para botones de mejora */
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .upgrade-button:hover {
+    background-color: #1e88e5; /* Azul más oscuro al hacer hover */
+    transform: translateY(-2px);
+  }
+  
+  .upgrade-button:active {
+    transform: translateY(0);
+  }
+  
+  .upgrade-button:disabled {
+    background-color: #90caf9; /* Azul claro para botones deshabilitados */
+    cursor: not-allowed;
+  }
+  
+  /* Estilos para los niveles */
+  .level-display {
+    font-size: 0.9rem;
+    color: #1976d2; /* Azul principal */
+  }
+  
+  /* Estilos para las barras de progreso */
+  .progress-bar {
+    width: 100%;
+    background-color: #bbdefb; /* Azul claro */
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 10px 0;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .progress-bar-fill {
+    height: 30px;
+    background-color: #1976d2; /* Azul principal */
+    text-align: center;
+    line-height: 30px;
+    color: white;
+    font-weight: bold;
+    transition: width 0.3s ease;
+  }
+  
+  /* Estilos para el notificador */
+  .notificacion {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #1976d2; /* Azul principal */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  
+  .notificacion.mostrar {
+    opacity: 1;
+  }
+  
+  /* Estilos responsive */
+  @media (max-width: 768px) {
+    #app {
+      flex-direction: column;
+    }
+  
+    #bus-container {
+      order: 2; /* Mover el bus al final en mobile */
+    }
+  
+    #botones-container {
+      order: 1; /* Mover los botones al inicio en mobile */
+    }
+  }

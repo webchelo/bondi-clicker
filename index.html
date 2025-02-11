@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bondi Clicker</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Notificador -->
+    <div id="notificacion" class="notificacion"></div>
+
+    <!-- Columna de botones y contador -->
+    <div id="botones-container">
+      <h1>Bondi Clicker: <span id="counter-display">0</span> Pasajeros</h1>
+
+      <div class="button-group">
+        <button id="cobrar-boleto" class="purchasable" data-cost="0">Cobrar Boleto (Gratis)</button>
+        <button class="upgrade-button" data-target="cobrar-boleto" data-cost="50">↑</button>
+        <span class="level-display" id="cobrar-boleto-level">Nivel 1</span>
+      </div>
+      <div class="button-group">
+        <button id="contratar-chofer" class="purchasable" data-cost="10">Contratar Chofer (Costo: 10)</button>
+        <button class="upgrade-button" data-target="contratar-chofer" data-cost="50">↑</button>
+        <span class="level-display" id="contratar-chofer-level">Nivel 1</span>
+      </div>
+      <div class="button-group">
+        <button id="siguiente-parada" class="purchasable" data-cost="100">Ir a la Siguiente Parada (Costo: 100)</button>
+        <button class="upgrade-button" data-target="siguiente-parada" data-cost="50">↑</button>
+        <span class="level-display" id="siguiente-parada-level">Nivel 1</span>
+      </div>
+      <div class="progress-bar">
+        <div id="siguiente-parada-fill" class="progress-bar-fill">0%</div>
+      </div>
+      <div class="button-group">
+        <button id="bus-costa" class="purchasable" data-cost="1000">Bus a la Costa (Costo: 1000)</button>
+        <button class="upgrade-button" data-target="bus-costa" data-cost="50">↑</button>
+        <span class="level-display" id="bus-costa-level">Nivel 1</span>
+      </div>
+      <div class="progress-bar">
+        <div id="bus-costa-fill" class="progress-bar-fill">0%</div>
+      </div>
+    </div>
+
+    <!-- Columna del bus -->
+    <div id="bus-container">
+      <img id="bus-image" src="/img/bus1.jpg" alt="Bus">
+      <button id="mejorar-bus" class="purchasable" data-cost="5000">Mejorar Bus (Costo: 5000)</button>
+    </div>
+  </div>
+
+  <script src="clicker.js"></script>
+</body>
+</html> 
