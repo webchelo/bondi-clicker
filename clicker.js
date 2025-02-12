@@ -362,3 +362,11 @@ document.addEventListener("keydown", (event) => {
     mostrarNotificacion("¡100,000 puntos agregados!");
   }
 });
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "n" || event.key === "N") {
+    counterSubject.counter = 0;
+    counterSubject.notifyObservers();
+    mostrarNotificacion("¡Puntos reseteados!");
+  }
+});
