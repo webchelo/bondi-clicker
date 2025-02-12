@@ -250,7 +250,7 @@ function upgradeBus() {
 function updateButtonStyles() {
   const buttons = [
     { id: "contratar-chofer", cost: 100 },
-    { id: "siguiente-parada", cost: 5000 },
+    { id: "siguiente-parada", cost: 1000 },
     { id: "bus-costa", cost: 15000 },
   ];
 
@@ -314,7 +314,7 @@ document.getElementById("contratar-chofer").addEventListener("click", function()
 
 document.getElementById("siguiente-parada").addEventListener("click", function() {
   if (!this.classList.contains("purchased")) {
-    purchaseButton("siguiente-parada", 5000);
+    purchaseButton("siguiente-parada", 1000);
   } else {
     counterSubject.startProgressBar((multiplier) => {
       counterSubject.counter = Math.round(counterSubject.counter + 100 * multiplier);
