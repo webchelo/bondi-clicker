@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bondi Clicker</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pirata+One&display=swap" rel="stylesheet">
 </head>
 <body>
   <div id="app">
@@ -13,7 +16,11 @@
 
     <!-- Columna de botones y contador -->
     <div id="botones-container">
-      <h1>Bondi Clicker: <span id="counter-display">0</span> Pasajeros</h1>
+      <h1>Bondi Clicker</h1>
+      <h2>
+        <span id="counter-display">0</span> Pasajeros
+        <div id="animated-numbers-container"></div> <!-- Contenedor para los números animados -->
+      </h2>
 
       <div class="button-group">
         <button id="cobrar-boleto" class="purchasable" data-cost="0">Cobrar Boleto (Gratis)</button>
@@ -21,24 +28,25 @@
         <span class="level-display" id="cobrar-boleto-level">Nivel 1</span>
       </div>
       <div class="button-group">
-        <button id="contratar-chofer" class="purchasable" data-cost="10">Contratar Chofer (Costo: 10)</button>
+        <button id="contratar-chofer" class="purchasable blocked" data-cost="100">Contratar Chofer (Costo: 100)</button>
         <button class="upgrade-button" data-target="contratar-chofer" data-cost="50">↑</button>
         <span class="level-display" id="contratar-chofer-level">Nivel 1</span>
       </div>
       <div class="button-group">
-        <button id="siguiente-parada" class="purchasable" data-cost="100">Ir a la Siguiente Parada (Costo: 100)</button>
+        <button id="siguiente-parada" class="purchasable blocked" data-cost="1000">Ir a la Siguiente Parada (Costo: 1000)</button>
         <button class="upgrade-button" data-target="siguiente-parada" data-cost="50">↑</button>
         <span class="level-display" id="siguiente-parada-level">Nivel 1</span>
       </div>
-      <div class="progress-bar">
+      <div class="progress-bar blocked" id="siguiente-parada-bar">
         <div id="siguiente-parada-fill" class="progress-bar-fill">0%</div>
       </div>
+      
       <div class="button-group">
-        <button id="bus-costa" class="purchasable" data-cost="1000">Bus a la Costa (Costo: 1000)</button>
+        <button id="bus-costa" class="purchasable blocked" data-cost="15000">Viajar a la Costa (Costo: 15000)</button>
         <button class="upgrade-button" data-target="bus-costa" data-cost="50">↑</button>
         <span class="level-display" id="bus-costa-level">Nivel 1</span>
       </div>
-      <div class="progress-bar">
+      <div class="progress-bar blocked" id="bus-costa-bar">
         <div id="bus-costa-fill" class="progress-bar-fill">0%</div>
       </div>
     </div>
@@ -46,10 +54,10 @@
     <!-- Columna del bus -->
     <div id="bus-container">
       <img id="bus-image" src="/img/bus1.jpg" alt="Bus">
-      <button id="mejorar-bus" class="purchasable" data-cost="5000">Mejorar Bus (Costo: 5000)</button>
+      <button id="mejorar-bus" class="purchasable" data-cost="5000">Mejorar Bondi (Costo: 5000)</button>
     </div>
   </div>
 
   <script src="clicker.js"></script>
 </body>
-</html> 
+</html>
