@@ -56,20 +56,7 @@ h2 span {
   gap: 10px;
 }
 
-/* Columna del bus */
-#bus-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
 
-#bus-image {
-  width: 200px;
-  height: auto;
-  margin-bottom: 10px;
-}
 
 /* Estilos para los grupos de botones */
 .button-group {
@@ -195,21 +182,6 @@ button.purchasable:disabled {
   opacity: 1;
 }
 
-/* Estilos responsive */
-@media (max-width: 768px) {
-  #app {
-    flex-direction: column;
-  }
-
-  #bus-container {
-    order: 2;
-  }
-
-  #botones-container {
-    order: 1;
-  }
-}
-
 /* Estilos para las barras de progreso bloqueadas */
 .progress-bar.blocked {
   background-color: #9e9e9e; /* Gris para barras bloqueadas */
@@ -241,6 +213,7 @@ button.purchasable:disabled {
   left: 50%;
   transform: translateX(-50%);
   font-size: 1.2rem;
+  font-weight: bold;
   color: #1976d2; /* Color azul */
   opacity: 1;
   animation: floatUp 1s ease-out forwards; /* Animación */
@@ -252,8 +225,77 @@ button.purchasable:disabled {
     top: -20px;
     opacity: 1;
   }
+  40% { opacity: 0; }
   100% {
-    top: -50px;
+    top: -200px;
     opacity: 0;
+  }
+}
+
+
+
+
+#chofer-multiplier {
+  display: block;
+  margin-top: 10px;
+  font-size: 1rem;
+  color: #1976d2;
+}
+
+/* Contenedor vertical para el bus y el chofer */
+.vertical-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px; /* Espacio entre el bus y el chofer */
+}
+
+/* Estilos para el contenedor del bus */
+#bus-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Estilos para la imagen del bus */
+#bus-image {
+  width: 200px; /* Ancho fijo para la imagen del bus */
+  height: 150px; /* Altura fija para la imagen del bus */
+  object-fit: cover; /* Asegura que la imagen cubra el espacio sin distorsionarse */
+}
+
+/* Estilos para el contenedor del chofer */
+#chofer-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Estilos para la imagen del chofer */
+#chofer-image {
+  width: 100px; /* Ancho fijo para la imagen del chofer */
+  height: 100px; /* Altura fija para la imagen del chofer */
+  object-fit: cover; /* Asegura que la imagen cubra el espacio sin distorsionarse */
+}
+
+/* Estilos responsive */
+@media (max-width: 768px) {
+  #app {
+    flex-direction: column;
+  }
+
+  #bus-container {
+    order: 1;
+  }
+
+  #botones-container {
+    order: 0;
+  }
+
+  .vertical-container {
+    flex-direction: column-reverse;
   }
 }

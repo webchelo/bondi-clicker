@@ -16,22 +16,27 @@
 
     <!-- Columna de botones y contador -->
     <div id="botones-container">
-      <h1>Bondi Clicker</h1>
+      <h1>Bondi Clicker <span style="font-size: 1rem; font-family: Arial, Helvetica, sans-serif;">0.0.2</span></h1>
       <h2>
         <span id="counter-display">0</span> Pasajeros
         <div id="animated-numbers-container"></div> <!-- Contenedor para los números animados -->
       </h2>
 
+      <!-- Botón Cobrar Boleto -->
       <div class="button-group">
-        <button id="cobrar-boleto" class="purchasable" data-cost="0">Cobrar Boleto (Gratis)</button>
+        <button id="cobrar-boleto" class="purchasable" data-cost="0">Cobrar Boleto</button>
         <button class="upgrade-button" data-target="cobrar-boleto" data-cost="50">↑</button>
         <span class="level-display" id="cobrar-boleto-level">Nivel 1</span>
       </div>
+
+      <!-- Botón Contratar Chofer -->
       <div class="button-group">
         <button id="contratar-chofer" class="purchasable blocked" data-cost="100">Contratar Chofer (Costo: 100)</button>
         <button class="upgrade-button" data-target="contratar-chofer" data-cost="50">↑</button>
         <span class="level-display" id="contratar-chofer-level">Nivel 1</span>
       </div>
+
+      <!-- Botón Siguiente Parada -->
       <div class="button-group">
         <button id="siguiente-parada" class="purchasable blocked" data-cost="1000">Ir a la Siguiente Parada (Costo: 1000)</button>
         <button class="upgrade-button" data-target="siguiente-parada" data-cost="50">↑</button>
@@ -40,7 +45,8 @@
       <div class="progress-bar blocked" id="siguiente-parada-bar">
         <div id="siguiente-parada-fill" class="progress-bar-fill">0%</div>
       </div>
-      
+
+      <!-- Botón Bus a la Costa -->
       <div class="button-group">
         <button id="bus-costa" class="purchasable blocked" data-cost="15000">Viajar a la Costa (Costo: 15000)</button>
         <button class="upgrade-button" data-target="bus-costa" data-cost="50">↑</button>
@@ -51,10 +57,19 @@
       </div>
     </div>
 
-    <!-- Columna del bus -->
-    <div id="bus-container">
-      <img id="bus-image" src="/img/bus1.jpg" alt="Bus">
-      <button id="mejorar-bus" class="purchasable" data-cost="5000">Mejorar Bondi (Costo: 5000)</button>
+    <!-- Contenedor vertical para el bus y el chofer -->
+    <div class="vertical-container">
+      <!-- Columna del bus -->
+      <div id="bus-container">
+        <img id="bus-image" src="/img/bus1.jpg" alt="Bus">
+        <button id="mejorar-bus" class="purchasable" data-cost="5000">Mejorar Bondi (Costo: 5000)</button>
+      </div>
+
+      <!-- Chofer debajo del bus -->
+      <div id="chofer-container">
+        <img id="chofer-image" src="/img/chofer1.jpg" alt="Chofer">
+        <button id="mejorar-chofer" class="purchasable" data-cost="10000">Mejorar Chofer (Costo: 10000)</button>
+      </div>
     </div>
   </div>
 
