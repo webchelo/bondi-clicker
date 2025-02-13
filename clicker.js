@@ -10,8 +10,6 @@ const cobrarBoletoText = "Cobrar Boleto";
 const contratarChoferText = "Desbloquear (Costo: 100)";
 const siguienteParadaText = "Desbloquear (Costo: 1000)";
 const busCostaText = "Desbloquear (Costo: 15000)";
-const mejorarBusText = document.querySelector('#mejorar-bus').textContent = `Mejorar bondi (Costo: ${formatNumber(5000)})`;
-const mejorarChoferText = document.querySelector('#mejorar-chofer').textContent = `Mejorar chofer (Costo: ${formatNumber(10000)})`;
 
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -57,8 +55,8 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("contratar-chofer").textContent = contratarChoferText;
   document.getElementById("siguiente-parada").textContent = siguienteParadaText;
   document.getElementById("bus-costa").textContent = busCostaText;
-  document.getElementById("mejorar-bus").textContent = mejorarBusText;
-  document.getElementById("mejorar-chofer").textContent = mejorarChoferText;
+  document.getElementById("mejorar-bus").textContent = document.querySelector('#mejorar-bus').textContent = `Mejorar bondi (Costo: ${formatNumber(counterSubject.busUpgradeCost)})`;
+  document.getElementById("mejorar-chofer").textContent =  document.querySelector('#mejorar-chofer').textContent = `Mejorar chofer (Costo: ${formatNumber(counterSubject.choferUpgradeCost)})`;
 
   // Asignar las imágenes
   document.getElementById("bus-image").src = `img/bus${counterSubject.busLevel}.jpg`;
@@ -79,6 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+/*
   const busLevelDisplay = document.getElementById("bus-level");
   if (busLevelDisplay) {
     busLevelDisplay.textContent = `Nivel ${counterSubject.busLevel}`;
@@ -88,6 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (choferLevelDisplay) {
     choferLevelDisplay.textContent = `Nivel ${counterSubject.choferLevel}`;
   }
+*/
 
     // Si el chofer ya estaba contratado, actualizar el botón
     if (counterSubject.purchasedButtons.has("contratar-chofer")) {
@@ -96,11 +96,34 @@ document.addEventListener("DOMContentLoaded", () => {
       contratarChoferButton.style.backgroundColor = "#90caf9";
       contratarChoferButton.disabled = true;
     }
+
+    // Si la parada ya estaba comprada, actualizar el botón
+    if (counterSubject.purchasedButtons.has("siguiente-parada")) {
+      const siguienteParadaButton = document.getElementById("siguiente-parada");
+      siguienteParadaButton.textContent = "Conducir a la siguiente parada";
+
+    }
+
+    // Si viajar a la costa esta comprado, actualizar el botón
+    if (counterSubject.purchasedButtons.has("bus-costa")) {
+      const busCostaButton = document.getElementById("bus-costa");
+      busCostaButton.textContent = "Viajar a la costa";
+    }
+
+    // Actualizar upgrades de bondi
+    if (counterSubject.busLevel >= 10) {
+      const busUpgradeButton = document.querySelector('#mejorar-bus')
+      busUpgradeButton.textContent = 'Bondi al nivel máximo'
+      busUpgradeButton.style.backgroundColor = "#90caf9";
+    }
+
+    // Actualizar upgrades de bondi
+    if (counterSubject.choferLevel >= 5) {
+      const busUpgradeButton = document.querySelector('#mejorar-chofer')
+      busUpgradeButton.textContent = 'Chofer al nivel máximo'
+      busUpgradeButton.style.backgroundColor = "#90caf9";
+    }
 });
-
-
-
-
 
 function saveGameState(subject) {
   if (isInitialState) {
