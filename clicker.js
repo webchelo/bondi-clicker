@@ -1,3 +1,173 @@
+
+let isInitialState = true; // Bandera para controlar el estado inicial
+
+// Variables para el título y versión
+const gameTitle = "Bondi Clicker";
+const gameVersion = "0.0.2";
+
+// Variables para los textos de los botones
+const cobrarBoletoText = "Cobrar Boleto";
+const contratarChoferText = "Desbloquear (Costo: 100)";
+const siguienteParadaText = "Desbloquear (Costo: 1000)";
+const busCostaText = "Desbloquear (Costo: 15000)";
+const mejorarBusText = document.querySelector('#mejorar-bus').textContent = `Mejorar bondi (Costo: ${formatNumber(5000)})`;
+const mejorarChoferText = document.querySelector('#mejorar-chofer').textContent = `Mejorar chofer (Costo: ${formatNumber(10000)})`;
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const savedState = localStorage.getItem('gameState');
+  if (savedState) {
+    loadGameState(counterSubject); // Cargar el estado del juego si existe
+    isInitialState = false; // Marcar el estado como "no inicial" después de cargar
+  } else {
+    // Inicializar el juego con valores por defecto
+    counterSubject.counter = 0;
+    counterSubject.progress = 0;
+    counterSubject.busCostaProgress = 0;
+    counterSubject.busCostaReady = false;
+    counterSubject.purchasedButtons = new Set();
+    counterSubject.buttonLevels = {
+      "cobrar-boleto": 1,
+      "contratar-chofer": 1,
+      "siguiente-parada": 1,
+      "bus-costa": 1,
+    };
+    counterSubject.busLevel = 1;
+    counterSubject.busMultiplier = 1;
+    counterSubject.busUpgradeCost = 5000;
+    counterSubject.choferMultiplier = 1;
+    counterSubject.choferUpgradeCost = 10000;
+    counterSubject.choferLevel = 1;
+  }
+
+  updateBusCostaButton();
+  updateButtonStyles();
+
+
+
+  document.querySelector('#siguiente-parada-fill').style = 'background-color:#1976d2';
+  document.querySelector('#bus-costa-fill').style = 'background-color:#1976d2';
+
+  // Asignar el título y la versión
+  const titleElement = document.querySelector("h1");
+  titleElement.innerHTML = `${gameTitle} <busspan style="font-size: 1rem; font-family: Arial, Helvetica, sans-serif;">${gameVersion}</span>`;
+
+  // Asignar los textos de los botones
+  document.getElementById("cobrar-boleto").textContent = cobrarBoletoText;
+  document.getElementById("contratar-chofer").textContent = contratarChoferText;
+  document.getElementById("siguiente-parada").textContent = siguienteParadaText;
+  document.getElementById("bus-costa").textContent = busCostaText;
+  document.getElementById("mejorar-bus").textContent = mejorarBusText;
+  document.getElementById("mejorar-chofer").textContent = mejorarChoferText;
+
+  // Asignar las imágenes
+  document.getElementById("bus-image").src = `img/bus${counterSubject.busLevel}.jpg`;
+  document.getElementById("chofer-image").src = `/img/chofer${counterSubject.choferLevel}.jpg`;
+
+  // Cargar el estado del juego y otras inicializaciones
+  loadGameState(counterSubject);
+  counterSubject.notifyObservers();
+  updateButtonStyles();
+  counterSubject.notifyProgress();
+  counterSubject.notifyBusCostaProgress();
+
+  // Actualizar niveles de botones, bus y chofer
+  Object.keys(counterSubject.buttonLevels).forEach(buttonId => {
+    const levelDisplay = document.getElementById(`${buttonId}-level`);
+    if (levelDisplay) {
+      levelDisplay.textContent = `Nivel ${counterSubject.buttonLevels[buttonId]}`;
+    }
+  });
+
+  const busLevelDisplay = document.getElementById("bus-level");
+  if (busLevelDisplay) {
+    busLevelDisplay.textContent = `Nivel ${counterSubject.busLevel}`;
+  }
+
+  const choferLevelDisplay = document.getElementById("chofer-level");
+  if (choferLevelDisplay) {
+    choferLevelDisplay.textContent = `Nivel ${counterSubject.choferLevel}`;
+  }
+
+    // Si el chofer ya estaba contratado, actualizar el botón
+    if (counterSubject.purchasedButtons.has("contratar-chofer")) {
+      const contratarChoferButton = document.getElementById("contratar-chofer");
+      contratarChoferButton.textContent = "¡Chofer contratado!";
+      contratarChoferButton.style.backgroundColor = "#90caf9";
+      contratarChoferButton.disabled = true;
+    }
+});
+
+
+
+
+
+function saveGameState(subject) {
+  if (isInitialState) {
+    return; // No guardar el estado si es el estado inicial
+  }
+
+  const gameState = {
+    counter: subject.counter,
+    progress: subject.progress,
+    busCostaProgress: subject.busCostaProgress,
+    busCostaReady: subject.busCostaReady,
+    purchasedButtons: Array.from(subject.purchasedButtons),
+    buttonLevels: subject.buttonLevels,
+    busLevel: subject.busLevel,
+    busMultiplier: subject.busMultiplier,
+    busUpgradeCost: subject.busUpgradeCost,
+    choferMultiplier: subject.choferMultiplier,
+    choferUpgradeCost: subject.choferUpgradeCost,
+    choferLevel: subject.choferLevel,
+    buttonTexts: {
+      "cobrar-boleto": document.getElementById("cobrar-boleto").textContent,
+      "contratar-chofer": document.getElementById("contratar-chofer").textContent,
+      "siguiente-parada": document.getElementById("siguiente-parada").textContent,
+      "bus-costa": document.getElementById("bus-costa").textContent,
+      "mejorar-bus": document.getElementById("mejorar-bus").textContent,
+      "mejorar-chofer": document.getElementById("mejorar-chofer").textContent,
+    },
+  };
+  localStorage.setItem('gameState', JSON.stringify(gameState));
+}
+
+
+  
+function loadGameState(subject) {
+  const savedState = localStorage.getItem('gameState');
+  if (savedState) {
+    const gameState = JSON.parse(savedState);
+    subject.counter = gameState.counter;
+    subject.progress = gameState.progress;
+    subject.busCostaProgress = gameState.busCostaProgress;
+    subject.busCostaReady = gameState.busCostaReady;
+    subject.purchasedButtons = new Set(gameState.purchasedButtons);
+    subject.buttonLevels = gameState.buttonLevels;
+    subject.busLevel = gameState.busLevel;
+    subject.busMultiplier = gameState.busMultiplier;
+    subject.busUpgradeCost = gameState.busUpgradeCost;
+    subject.choferMultiplier = gameState.choferMultiplier;
+    subject.choferUpgradeCost = gameState.choferUpgradeCost;
+    subject.choferLevel = gameState.choferLevel;
+
+    // Si el chofer ya estaba contratado, activar el incremento automático
+    if (subject.purchasedButtons.has("contratar-chofer")) {
+      const level = subject.buttonLevels["contratar-chofer"];
+      const multiplier = subject.busMultiplier * subject.choferMultiplier;
+      const intervalTime = 1000 / level;
+      subject.intervalId = setInterval(() => {
+        const amount = Math.round(multiplier);
+        createAnimatedNumber(amount);
+        subject.counter = Math.round(subject.counter + multiplier);
+        subject.notifyObservers();
+        saveGameState(subject); // Guardar el estado durante el incremento automático
+      }, intervalTime);
+    }
+  }
+}
+
+
 class Subject {
   constructor() {
     this.observers = [];
@@ -17,13 +187,16 @@ class Subject {
     };
     this.busLevel = 1;
     this.busMultiplier = 1;
-    this.busUpgradeCost = 5000;
-    this.choferMultiplier = 1; // Multiplicador inicial del chofer
-    this.choferUpgradeCost = 10000; // Costo inicial para mejorar al chofer
-    this.choferUpgradePercentage = 0.1; // Aumento del 10% por mejora
-    this.choferLevel = 1; // Nivel actual del chofer
-    this.choferMaxLevel = 5; // Nivel máximo del chofer
+    this.busUpgradeCost = 5000
+    this.choferMultiplier = 1;
+    this.choferUpgradeCost = 10000;
+    this.choferUpgradePercentage = 0.1;
+    this.choferLevel = 1;
+    this.choferMaxLevel = 5;
+    
 
+    // Cargar el estado guardado al iniciar
+    loadGameState(this);
   }
 
   addObserver(observer) {
@@ -41,6 +214,7 @@ class Subject {
     createAnimatedNumber(amount);
     this.counter = Math.round(this.counter + multiplier);
     this.notifyObservers();
+    saveGameState(this); // Guardar el estado después de incrementar
   }
 
   toggleIncrementPerSecond() {
@@ -48,23 +222,24 @@ class Subject {
       clearInterval(this.intervalId);
       this.intervalId = null;
     } else {
-      const level = this.buttonLevels["contratar-chofer"]; // Usa el nivel del botón "contratar-chofer"
-      const multiplier = this.busMultiplier * this.choferMultiplier; // Incluye el multiplicador del chofer
-      const intervalTime = 1000 / level; // Reduce el intervalo según el nivel del botón "contratar-chofer"
+      const level = this.buttonLevels["contratar-chofer"];
+      const multiplier = this.busMultiplier * this.choferMultiplier;
+      const intervalTime = 1000 / level;
       this.intervalId = setInterval(() => {
         const amount = Math.round(multiplier);
         createAnimatedNumber(amount);
         this.counter = Math.round(this.counter + multiplier);
         this.notifyObservers();
+        saveGameState(this); // Guardar el estado durante el incremento automático
       }, intervalTime);
     }
+    saveGameState(this);
   }
-
   restartIncrementPerSecond() {
     if (this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = null;
-      this.toggleIncrementPerSecond(); // Reinicia el intervalo con el nuevo intervalTime
+      this.toggleIncrementPerSecond();
     }
   }
 
@@ -83,6 +258,7 @@ class Subject {
         createAnimatedNumber(amount);
         this.counter = Math.round(this.counter + 100 * multiplier);
         callback(multiplier);
+        saveGameState(this); // Guardar el estado después de completar la barra de progreso
       }
       this.notifyProgress();
     }, 30);
@@ -99,6 +275,7 @@ class Subject {
         clearInterval(this.busCostaIntervalId);
         this.busCostaIntervalId = null;
         this.busCostaReady = true;
+        saveGameState(this); // Guardar el estado cuando el Bus Costa está listo
       }
       this.notifyBusCostaProgress();
     }, 100);
@@ -115,6 +292,7 @@ class Subject {
       this.busCostaProgress = 0;
       this.notifyObservers();
       this.notifyBusCostaProgress();
+      saveGameState(this); // Guardar el estado después de reclamar la recompensa
     }
   }
 
@@ -123,6 +301,7 @@ class Subject {
       this.counter -= cost;
       this.purchasedButtons.add(buttonId);
       this.notifyObservers();
+      saveGameState(this); // Guardar el estado después de comprar un botón
       return true;
     }
     return false;
@@ -133,12 +312,11 @@ class Subject {
       this.counter -= cost;
       this.buttonLevels[buttonId] += 1;
       this.notifyObservers();
+      saveGameState(this); // Guardar el estado después de mejorar un botón
   
-      // Reiniciar el intervalo si el botón "contratar-chofer" se mejora
       if (buttonId === "contratar-chofer" && this.intervalId) {
         this.restartIncrementPerSecond();
       }
-  
       return true;
     }
     return false;
@@ -150,15 +328,12 @@ class Subject {
       this.busLevel += 1;
       this.busMultiplier *= 2;
       this.busUpgradeCost *= 2;
+      saveGameState(this); // Guardar el estado después de mejorar el bus
   
-      // Reiniciar el intervalo para aplicar el nuevo multiplicador
       if (this.intervalId) {
         this.restartIncrementPerSecond();
       }
-  
-      // Notificar a los observadores para actualizar la UI
       this.notifyObservers();
-  
       return true;
     }
     return false;
@@ -167,18 +342,10 @@ class Subject {
   upgradeChofer(cost) {
     if (this.counter >= cost && this.choferLevel < this.choferMaxLevel) {
       this.counter -= cost;
-      this.choferMultiplier *= (1 + this.choferUpgradePercentage); // Aumenta el multiplicador en un 10%
-      this.choferUpgradeCost *= 2; // Duplica el costo de la próxima mejora
-      this.choferLevel += 1; // Aumenta el nivel del chofer
-  
-      // Reiniciar el intervalo para aplicar el nuevo multiplicador
-      if (this.intervalId) {
-        this.restartIncrementPerSecond();
-      }
-  
-      // Notificar a los observadores para actualizar la UI
-      this.notifyObservers();
-  
+      this.choferMultiplier *= (1 + this.choferUpgradePercentage);
+      this.choferUpgradeCost *= 2; // Duplicar el costo para el próximo nivel
+      this.choferLevel += 1;
+      saveGameState(this); // Guardar el estado después de mejorar al chofer
       return true;
     } else if (this.choferLevel >= this.choferMaxLevel) {
       mostrarNotificacion("¡El chofer ya está en su nivel máximo!");
@@ -186,6 +353,7 @@ class Subject {
     }
     return false;
   }
+
 
   notifyProgress() {
     this.observers.forEach(observer => observer.updateProgress(this.progress));
@@ -250,18 +418,17 @@ function purchaseButton(buttonId, cost) {
     button.classList.remove("blocked");
     button.classList.add("purchased");
     button.disabled = false;
-    button.textContent = button.textContent.replace(/\(Costo: \d+\)/, "");
 
-    // Cambiar el color de la barra de progreso correspondiente
-    if (buttonId === "siguiente-parada") {
-      const progressBar = document.getElementById("siguiente-parada-bar");
-      progressBar.classList.remove("blocked");
-      progressBar.classList.add("purchased");
+    // Actualizar el texto del botón
+    if (buttonId === "contratar-chofer") {
+      button.textContent = "¡Chofer contratado!";
+    } else if (buttonId === "siguiente-parada") {
+      button.textContent = "Conducir a la siguiente parada";
     } else if (buttonId === "bus-costa") {
-      const progressBar = document.getElementById("bus-costa-bar");
-      progressBar.classList.remove("blocked");
-      progressBar.classList.add("purchased");
+      button.textContent = "Viajar a la Costa";
     }
+
+    saveGameState(counterSubject); // Guardar el estado después de comprar un botón
   } else {
     mostrarNotificacion("¡No tienes suficientes puntos para comprar este botón!");
   }
@@ -277,29 +444,106 @@ function upgradeButton(buttonId, cost) {
   }
 }
 
-  function upgradeBus() {
-    const cost = counterSubject.busUpgradeCost;
-    if (counterSubject.upgradeBus(cost)) {
-      const busImage = document.getElementById("bus-image");
-      busImage.src = `/img/bus${counterSubject.busLevel}.jpg`;
+function upgradeBus() {
+  const cost = counterSubject.busUpgradeCost;
+  if (counterSubject.upgradeBus(cost)) {
+    const busImage = document.getElementById("bus-image");
+    busImage.src = `img/bus${counterSubject.busLevel}.jpg`;
 
-      const mejorarBusButton = document.getElementById("mejorar-bus");
-      if (counterSubject.busLevel < 10) {
-        mejorarBusButton.textContent = `Mejorar Bondi (Costo: ${counterSubject.busUpgradeCost})`;
-      } else {
-        mejorarBusButton.textContent = "Bondi a nivel máximo";
-        mejorarBusButton.disabled = true;
-      }
-
-      mostrarNotificacion("¡Bondi mejorado! Ganancia de puntos duplicada.");
-    } else if (counterSubject.busLevel >= 10) {
-      mostrarNotificacion("¡El bondi ya está en su nivel máximo!");
+    const mejorarBusButton = document.getElementById("mejorar-bus");
+    
+    if (counterSubject.busLevel < 10) {
+      mejorarBusButton.textContent = `Mejorar bondi (Costo: ${formatNumber(counterSubject.busUpgradeCost)})`;
     } else {
-      mostrarNotificacion("¡No tienes suficientes puntos para mejorar el bondi!");
+      mejorarBusButton.textContent = "Bondi a nivel máximo";
+      mejorarBusButton.disabled = true;
+    }
+
+    // Guardar el estado del botón en localStorage
+    saveGameState(counterSubject);
+  } else if (counterSubject.busLevel >= 10) {
+    mostrarNotificacion("¡El bondi ya está en su nivel máximo!");
+  } else {
+    mostrarNotificacion("¡No tienes suficientes puntos para mejorar el bondi!");
+  }
+}
+
+
+function upgradeChofer() {
+  const cost = counterSubject.choferUpgradeCost;
+  if (counterSubject.upgradeChofer(cost)) {
+    const choferImage = document.getElementById("chofer-image");
+    choferImage.src = `img/chofer${counterSubject.choferLevel}.jpg`;
+
+    const mejorarChoferButton = document.getElementById("mejorar-chofer");
+    if (counterSubject.choferLevel < counterSubject.choferMaxLevel) {
+      // Formatear el costo correctamente
+      mejorarChoferButton.textContent = `Mejorar chofer (Costo: ${formatNumber(counterSubject.choferUpgradeCost)})`;
+    } else {
+      mejorarChoferButton.textContent = "Chofer a nivel máximo";
+      mejorarChoferButton.disabled = true;
+    }
+
+    // Guardar el estado del botón en localStorage
+    saveGameState(counterSubject);
+  } else if (counterSubject.choferLevel >= counterSubject.choferMaxLevel) {
+    mostrarNotificacion("¡El chofer ya está en su nivel máximo!");
+  } else {
+    mostrarNotificacion("¡No tienes suficientes puntos para mejorar al chofer!");
+  }
+}
+
+function updateBusCostaButton() {
+  const busCostaButton = document.getElementById("bus-costa");
+  if (counterSubject.busCostaReady) {
+    // Cuando el progreso está completo, el botón debe estar en azul
+    busCostaButton.classList.add("ready");
+    busCostaButton.style.backgroundColor = "#1976d2"; // Azul
+    busCostaButton.textContent = "Cobrar viaje";
+  } else if (counterSubject.busCostaProgress > 0 && counterSubject.busCostaProgress < 100) {
+    // Cuando el progreso está en curso, el botón debe estar en gris
+    busCostaButton.style.backgroundColor = "grey";
+    busCostaButton.textContent = "Viajando...";
+  } else {
+    // Cuando no hay progreso, el botón debe estar en azul
+    //busCostaButton.style.backgroundColor = "#1976d2"; // Azul
+    //busCostaButton.textContent = "Desbloquear (Costo: 15000)";
+  }
+}
+
+// Asegúrate de llamar a esta función cuando se actualice el progreso del Bus Costa
+counterSubject.addObserver(new Observer(
+  () => {},
+  () => {},
+  () => {
+    updateBusCostaButton();
+  }
+));
+
+document.getElementById("bus-costa").addEventListener("click", function() {
+  if (!this.classList.contains("purchased")) {
+    purchaseButton("bus-costa", 15000);
+  } else {
+    if (counterSubject.busCostaReady) {
+      counterSubject.claimBusCostaReward();
+      this.textContent = "Viajar a la Costa";
+      this.style.backgroundColor = "#1976d2"; // Azul
+    } else {
+      counterSubject.startBusCostaProgressBar();
+      this.textContent = "Viajando...";
+      this.style.backgroundColor = "grey"; // Gris
     }
   }
+});
 
-
+// Llama a esta función cuando se actualice el progreso del Bus Costa
+counterSubject.addObserver(new Observer(
+  () => {},
+  () => {},
+  () => {
+    updateBusCostaButton();
+  }
+));
 
 function updateButtonStyles() {
   const buttons = [
@@ -323,6 +567,9 @@ function updateButtonStyles() {
   });
 }
 
+// Llamar a esta función al cargar el estado del juego
+updateButtonStyles();
+
 counterSubject.addObserver(new Observer(
   () => {
     updateButtonStyles();
@@ -331,7 +578,6 @@ counterSubject.addObserver(new Observer(
   () => {}
 ));
 
-// Función para crear números animados
 function createAnimatedNumber(amount) {
   const container = document.getElementById("animated-numbers-container");
   const numberElement = document.createElement("div");
@@ -339,33 +585,53 @@ function createAnimatedNumber(amount) {
   numberElement.textContent = `+${amount}`;
   container.appendChild(numberElement);
 
-  // Eliminar el número animado después de que termine la animación
   setTimeout(() => {
     numberElement.remove();
   }, 1000);
 }
 
-// Función para calcular el multiplicador
 function getMultiplier(level) {
-  const BASE_MULTIPLIER = 1; // Aumenta en un 10% por nivel
+  const BASE_MULTIPLIER = 1;
   return 1 + (level - 1) * BASE_MULTIPLIER;
 }
 
 document.getElementById("cobrar-boleto").addEventListener("click", () => {
+  if (isInitialState) {
+    isInitialState = false; // Desactivar el flag después de la primera interacción
+  }
   counterSubject.increment();
 });
 
 document.getElementById("contratar-chofer").addEventListener("click", function () {
   if (!this.classList.contains("purchased")) {
-    purchaseButton("contratar-chofer", 100);
-  } else {
-    if (!counterSubject.intervalId) {
-      counterSubject.toggleIncrementPerSecond();
+    if (counterSubject.purchaseButton("contratar-chofer", 100)) {
+      if (isInitialState) {
+        isInitialState = false; // Desactivar el flag después de la primera interacción
+      }
+      // Activar el incremento automático
+      const level = counterSubject.buttonLevels["contratar-chofer"];
+      const multiplier = counterSubject.busMultiplier * counterSubject.choferMultiplier;
+      const intervalTime = 1000 / level;
+      counterSubject.intervalId = setInterval(() => {
+        const amount = Math.round(multiplier);
+        createAnimatedNumber(amount);
+        counterSubject.counter = Math.round(counterSubject.counter + multiplier);
+        counterSubject.notifyObservers();
+        saveGameState(counterSubject); // Guardar el estado durante el incremento automático
+      }, intervalTime);
+
+      // Actualizar el botón
+      this.classList.remove("blocked");
+      this.classList.add("purchased");
+      this.disabled = false;
       this.textContent = "¡Chofer contratado!";
-      this.style.backgroundColor = "#90caf9"; // Cambiar el color del botón
+      this.style.backgroundColor = "#90caf9";
+    } else {
+      mostrarNotificacion("¡No tienes suficientes puntos para contratar al chofer!");
     }
   }
 });
+
 
 document.getElementById("siguiente-parada").addEventListener("click", function() {
   if (!this.classList.contains("purchased")) {
@@ -378,19 +644,7 @@ document.getElementById("siguiente-parada").addEventListener("click", function()
   }
 });
 
-document.getElementById("bus-costa").addEventListener("click", function() {
-  if (!this.classList.contains("purchased")) {
-    purchaseButton("bus-costa", 15000);
-  } else {
-    if (counterSubject.busCostaReady) {
-      counterSubject.claimBusCostaReward();
-      this.textContent = "Bus a la Costa";
-    } else {
-      counterSubject.startBusCostaProgressBar();
-      this.textContent = "Terminar viaje";
-    }
-  }
-});
+
 
 document.querySelectorAll(".upgrade-button").forEach(button => {
   button.addEventListener("click", function() {
@@ -403,16 +657,15 @@ document.querySelectorAll(".upgrade-button").forEach(button => {
 document.getElementById("mejorar-bus").addEventListener("click", upgradeBus);
 
 document.getElementById("mejorar-chofer").addEventListener("click", function () {
-  const cost = counterSubject.choferUpgradeCost; // Costo dinámico de mejorar al chofer
+  const cost = counterSubject.choferUpgradeCost;
   if (counterSubject.upgradeChofer(cost)) {
-    // Actualizar la imagen del chofer
     const choferImage = document.getElementById("chofer-image");
     choferImage.src = `/img/chofer${counterSubject.choferLevel}.jpg`;
 
-    // Actualizar el texto del botón "Mejorar Chofer"
     const mejorarChoferButton = document.getElementById("mejorar-chofer");
     if (counterSubject.choferLevel < counterSubject.choferMaxLevel) {
-      mejorarChoferButton.textContent = `Mejorar Chofer (Costo: ${counterSubject.choferUpgradeCost})`;
+      // Formatear el costo correctamente
+      mejorarChoferButton.textContent = `Mejorar chofer (Costo: ${formatNumber(counterSubject.choferUpgradeCost)})`;
     } else {
       mejorarChoferButton.textContent = "Chofer a nivel máximo";
       mejorarChoferButton.disabled = true;
@@ -540,10 +793,12 @@ function startRandomEvent() {
     // Aplicar bonificación
     counterSubject.counter += randomEvent.bonus;
     counterSubject.notifyObservers();
+    saveGameState(counterSubject); // Guardar el estado después de la bonificación
   } else if (randomEvent.penalty && randomEvent.penalty !== "half") {
     // Aplicar penalización (como -50)
     counterSubject.counter -= randomEvent.penalty;
     counterSubject.notifyObservers();
+    saveGameState(counterSubject); // Guardar el estado después de la penalización
   } else if (randomEvent.penalty === "half") {
     // Aplicar penalización de "mitad de ganancias"
     const originalMultiplier = counterSubject.busMultiplier;
@@ -551,6 +806,7 @@ function startRandomEvent() {
     setTimeout(() => {
       counterSubject.busMultiplier = originalMultiplier; // Restaura el multiplicador original
       counterSubject.notifyObservers();
+      saveGameState(counterSubject); // Guardar el estado después de restaurar el multiplicador
     }, randomEvent.duration);
   } else if (randomEvent.multiplier) {
     const originalMultiplier = counterSubject.busMultiplier;
@@ -558,9 +814,25 @@ function startRandomEvent() {
     setTimeout(() => {
       counterSubject.busMultiplier = originalMultiplier;
       counterSubject.notifyObservers();
+      saveGameState(counterSubject); // Guardar el estado después de restaurar el multiplicador
     }, randomEvent.duration);
   }
 }
 
 // Lanzar un evento aleatorio cada 30 segundos
 setInterval(startRandomEvent, 30000);
+
+function resetGame() {
+  localStorage.removeItem('gameState');
+  isInitialState = true; // Marcar el estado como inicial
+  location.reload(); // Recargar la página para reiniciar el juego
+}
+
+document.getElementById("reset-button").addEventListener("click", () => {
+  if(confirm('¿Seguro querés eliminar todo el progreso?')) {
+    resetGame()
+  }});
+
+
+
+  

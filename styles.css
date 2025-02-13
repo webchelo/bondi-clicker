@@ -299,3 +299,9 @@ button.purchasable:disabled {
     flex-direction: column-reverse;
   }
 }
+/*
+
+#bus-costa:not(.ready) {
+  background-color: grey;
+  cursor: not-allowed;
+}*/
