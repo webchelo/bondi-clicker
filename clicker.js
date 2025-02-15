@@ -435,6 +435,7 @@ function mostrarNotificacion(mensaje) {
   }, 3000);
 }
 
+// Llamar a updateButtonStyles después de comprar un botón
 function purchaseButton(buttonId, cost) {
   if (counterSubject.purchaseButton(buttonId, cost)) {
     const button = document.getElementById(buttonId);
@@ -451,7 +452,7 @@ function purchaseButton(buttonId, cost) {
       button.textContent = "Viajar a la Costa";
     }
 
-    saveGameState(counterSubject); // Guardar el estado después de comprar un botón
+    updateButtonStyles(); // Actualizar estilos después de comprar
   } else {
     mostrarNotificacion("¡No tienes suficientes puntos para comprar este botón!");
   }
@@ -570,22 +571,58 @@ counterSubject.addObserver(new Observer(
 
 function updateButtonStyles() {
   const buttons = [
-    { id: "contratar-chofer", cost: 100 },
-    { id: "siguiente-parada", cost: 1000 },
-    { id: "bus-costa", cost: 15000 },
+    { id: "cobrar-boleto", cost: 0, upgradeCost: 50 }, // El botón "Cobrar Boleto" no tiene costo inicial
+    { id: "contratar-chofer", cost: 100, upgradeCost: 50 },
+    { id: "siguiente-parada", cost: 1000, upgradeCost: 50 },
+    { id: "bus-costa", cost: 15000, upgradeCost: 50 },
   ];
 
   buttons.forEach(button => {
     const buttonElement = document.getElementById(button.id);
-    if (!counterSubject.purchasedButtons.has(button.id)) {
-      if (counterSubject.counter >= button.cost) {
-        buttonElement.classList.remove("blocked");
+    const upgradeButton = document.querySelector(`.upgrade-button[data-target="${button.id}"]`);
+
+    // Lógica especial para el botón "Cobrar Boleto"
+    if (button.id === "cobrar-boleto") {
+      // El botón "Cobrar Boleto" siempre está desbloqueado
+      buttonElement.classList.remove("blocked");
+      buttonElement.disabled = false;
+
+      // Verificar si hay suficientes puntos para mejorar
+      if (counterSubject.counter >= button.upgradeCost) {
+        upgradeButton.classList.remove("blocked");
+        upgradeButton.disabled = false;
       } else {
-        buttonElement.classList.add("blocked");
+        upgradeButton.classList.add("blocked");
+        upgradeButton.disabled = true;
       }
     } else {
-      buttonElement.classList.remove("blocked");
-      buttonElement.classList.add("purchased");
+      // Lógica para los demás botones
+      if (counterSubject.purchasedButtons.has(button.id)) {
+        buttonElement.classList.remove("blocked");
+        buttonElement.classList.add("purchased");
+
+        // Verificar si hay suficientes puntos para mejorar
+        if (counterSubject.counter >= button.upgradeCost) {
+          upgradeButton.classList.remove("blocked");
+          upgradeButton.disabled = false;
+        } else {
+          upgradeButton.classList.add("blocked");
+          upgradeButton.disabled = true;
+        }
+      } else {
+        // Si el botón principal no está comprado, verificar si hay suficientes puntos para comprarlo
+        if (counterSubject.counter >= button.cost) {
+          buttonElement.classList.remove("blocked");
+          buttonElement.disabled = false;
+        } else {
+          buttonElement.classList.add("blocked");
+          buttonElement.disabled = true;
+        }
+
+        // El botón de upgrade debe estar bloqueado si el botón principal no está comprado
+        upgradeButton.classList.add("blocked");
+        upgradeButton.disabled = true;
+      }
     }
   });
 }
