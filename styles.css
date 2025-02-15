@@ -56,8 +56,6 @@ h2 span {
   gap: 10px;
 }
 
-
-
 /* Estilos para los grupos de botones */
 .button-group {
   display: flex;
@@ -67,7 +65,7 @@ h2 span {
 
 /* Estilos para los botones principales */
 button.purchasable {
-  background-color: #1976d2; /* Azul por defecto */
+  background-color: #1976d2;
   color: white;
   border: none;
   padding: 12px 24px;
@@ -75,6 +73,8 @@ button.purchasable {
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 100%;
+  max-width: 300px;
 }
 
 /* Estilos para botones comprados */
@@ -95,17 +95,8 @@ button.purchasable.blocked:hover {
 }
 
 button.purchasable:hover:not(.blocked) {
-  background-color: #1565c0; /* Azul más oscuro en hover */
-  transform: translateY(-2px);
-}
-
-button.purchasable:hover {
   background-color: #1565c0;
   transform: translateY(-2px);
-}
-
-button.purchasable:active {
-  transform: translateY(0);
 }
 
 button.purchasable:active:not(.blocked) {
@@ -117,22 +108,9 @@ button.purchasable:disabled {
   cursor: not-allowed;
 }
 
-/* Estilos para los botones de mejora bloqueados */
-.upgrade-button.blocked {
-  background-color: #9e9e9e; /* Gris para botones bloqueados */
-  cursor: not-allowed;
-  opacity: 0.7; /* Hacerlo más transparente */
-}
-
-
-.upgrade-button.blocked:hover {
-  background-color: #9e9e9e; /* Mantener el mismo color en hover */
-  transform: none; /* Eliminar la animación en hover */
-}
-
-/* Estilos para los botones de mejora desbloqueados */
+/* Estilos para los botones de mejora */
 .upgrade-button {
-  background-color: #42a5f5; /* Azul para botones desbloqueados */
+  background-color: #42a5f5;
   color: white;
   border: none;
   padding: 8px 12px;
@@ -148,28 +126,18 @@ button.purchasable:disabled {
   opacity: 0.7; /* Hacerlo más transparente */
 }
 
+.upgrade-button.blocked:hover {
+  background-color: #9e9e9e; /* Mantener el mismo color en hover */
+  transform: none; /* Eliminar la animación en hover */
+}
+
 .upgrade-button:hover:not(.blocked) {
-  background-color: #1e88e5; /* Azul más oscuro en hover */
+  background-color: #1e88e5;
   transform: translateY(-2px);
 }
 
 .upgrade-button:active:not(.blocked) {
   transform: translateY(0);
-}
-
-.upgrade-button:hover {
-  background-color: #1e88e5;
-  transform: translateY(-2px);
-}
-
-
-.upgrade-button:active {
-  transform: translateY(0);
-}
-
-.upgrade-button:disabled {
-  background-color: #90caf9;
-  cursor: not-allowed;
 }
 
 /* Estilos para los niveles */
@@ -268,17 +236,7 @@ button.purchasable:disabled {
   }
 }
 
-
-
-
-#chofer-multiplier {
-  display: block;
-  margin-top: 10px;
-  font-size: 1rem;
-  color: #1976d2;
-}
-
-/* Contenedor vertical para el bus y el chofer */
+/* Estilos para el contenedor vertical del bus y el chofer */
 .vertical-container {
   flex: 1;
   display: flex;
@@ -335,9 +293,3 @@ button.purchasable:disabled {
     flex-direction: column-reverse;
   }
 }
-/*
-
-#bus-costa:not(.ready) {
-  background-color: grey;
-  cursor: not-allowed;
-}*/

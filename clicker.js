@@ -3,7 +3,7 @@ let isInitialState = true; // Bandera para controlar el estado inicial
 
 // Variables para el título y versión
 const gameTitle = "Bondi Clicker";
-const gameVersion = "0.0.3";
+const gameVersion = "0.0.4";
 
 // Variables para los textos de los botones
 const cobrarBoletoText = "Cobrar Boleto";
@@ -32,13 +32,31 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     counterSubject.busLevel = 1;
     counterSubject.busMultiplier = 1;
-    counterSubject.busUpgradeCost = 5000;
+    counterSubject.busUpgradeCost = 50000;
     counterSubject.choferMultiplier = 1;
     counterSubject.choferUpgradeCost = 10000;
     counterSubject.choferLevel = 1;
   }
 
+  // Actualizar el botón "Siguiente Parada" al inicio del juego
+  const siguienteParadaButton = document.getElementById("siguiente-parada");
+  if (siguienteParadaButton) {
+    if (counterSubject.purchasedButtons.has("siguiente-parada")) {
+      // Si ya está comprado, mostrar el texto normal
+      siguienteParadaButton.textContent = "Conducir a la siguiente parada";
+      siguienteParadaButton.classList.remove("blocked");
+      siguienteParadaButton.classList.add("purchased");
+      siguienteParadaButton.disabled = false;
+    } else {
+      // Si no está comprado, mostrar el texto de desbloqueo
+      siguienteParadaButton.textContent = "Desbloquear (Costo: 1000)";
+      siguienteParadaButton.classList.add("blocked");
+      siguienteParadaButton.disabled = true;
+    }
+  }
+
   updateBusCostaButton();
+  updateParadaButton();
   updateButtonStyles();
 
 
@@ -93,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (counterSubject.purchasedButtons.has("contratar-chofer")) {
       const contratarChoferButton = document.getElementById("contratar-chofer");
       contratarChoferButton.textContent = "¡Chofer contratado!";
-      contratarChoferButton.style.backgroundColor = "#90caf9";
+      contratarChoferButton.style.backgroundColor = "#9e9e9e";
       contratarChoferButton.disabled = true;
     }
 
@@ -194,6 +212,15 @@ function loadGameState(subject) {
         saveGameState(subject); // Guardar el estado durante el incremento automático
       }, intervalTime);
     }
+
+    if (gameState.buttonTexts) {
+      Object.keys(gameState.buttonTexts).forEach(buttonId => {
+        const button = document.getElementById(buttonId);
+        if (button) {
+          button.textContent = gameState.buttonTexts[buttonId];
+        }
+      });
+    }
   }
 }
 
@@ -217,7 +244,7 @@ class Subject {
     };
     this.busLevel = 1;
     this.busMultiplier = 1;
-    this.busUpgradeCost = 5000
+    this.busUpgradeCost = 50000
     this.choferMultiplier = 1;
     this.choferUpgradeCost = 10000;
     this.choferUpgradePercentage = 0.1;
@@ -282,7 +309,7 @@ class Subject {
 
   startProgressBar(callback) {
     if (this.progressIntervalId) return;
-
+  
     const level = this.buttonLevels["siguiente-parada"];
     const multiplier = getMultiplier(level) * this.busMultiplier;
     this.progressIntervalId = setInterval(() => {
@@ -290,12 +317,19 @@ class Subject {
       if (this.progress >= 100) {
         clearInterval(this.progressIntervalId);
         this.progressIntervalId = null;
-        this.progress = 0;
+        this.progress = 0; // Reiniciar el progreso
         const amount = Math.round(100 * multiplier);
         createAnimatedNumber(amount);
         this.counter = Math.round(this.counter + 100 * multiplier);
         callback(multiplier);
         saveGameState(this); // Guardar el estado después de completar la barra de progreso
+  
+        // Restaurar el botón "Siguiente Parada" a su estado normal
+        const siguienteParadaButton = document.getElementById("siguiente-parada");
+        if (siguienteParadaButton) {
+          siguienteParadaButton.textContent = "Conducir a la siguiente parada";
+          siguienteParadaButton.style.backgroundColor = "#1976d2"; // Azul
+        }
       }
       this.notifyProgress();
     }, 30);
@@ -389,6 +423,7 @@ class Subject {
       this.choferUpgradeCost *= 2; // Duplicar el costo para el próximo nivel
       this.choferLevel += 1;
       saveGameState(this); // Guardar el estado después de mejorar al chofer
+      this.notifyObservers();
       return true;
     } else if (this.choferLevel >= this.choferMaxLevel) {
       mostrarNotificacion("¡El chofer ya está en su nivel máximo!");
@@ -500,6 +535,8 @@ function upgradeBus() {
       mejorarBusButton.textContent = `Mejorar bondi (Costo: ${formatNumber(counterSubject.busUpgradeCost)})`;
     } else {
       mejorarBusButton.textContent = "Bondi a nivel máximo";
+      mejorarBusButton.style.backgroundColor = 'gold'
+      mejorarBusButton.style.color = 'black'
       mejorarBusButton.disabled = true;
     }
 
@@ -520,11 +557,13 @@ function upgradeChofer() {
     choferImage.src = `img/chofer${counterSubject.choferLevel}.jpg`;
 
     const mejorarChoferButton = document.getElementById("mejorar-chofer");
-    if (counterSubject.choferLevel < counterSubject.choferMaxLevel) {
+    if (counterSubject.choferLevel < 5) {
       // Formatear el costo correctamente
       mejorarChoferButton.textContent = `Mejorar chofer (Costo: ${formatNumber(counterSubject.choferUpgradeCost)})`;
     } else {
       mejorarChoferButton.textContent = "Chofer a nivel máximo";
+      mejorarChoferButton.style.backgroundColor = 'gold'
+      mejorarChoferButton.style.color = 'black'
       mejorarChoferButton.disabled = true;
     }
 
@@ -555,14 +594,24 @@ function updateBusCostaButton() {
   }
 }
 
-// Asegúrate de llamar a esta función cuando se actualice el progreso del Bus Costa
-counterSubject.addObserver(new Observer(
-  () => {},
-  () => {},
-  () => {
-    updateBusCostaButton();
+function updateParadaButton() {
+  const paradaButton = document.getElementById("siguiente-parada");
+  if (paradaButton) {
+    if (counterSubject.progress > 0 && counterSubject.progress < 100) {
+      // Cuando el progreso está en curso, el botón debe estar en gris
+      paradaButton.style.backgroundColor = "grey";
+      paradaButton.textContent = "Viajando...";
+    } else if (counterSubject.purchasedButtons.has("siguiente-parada")) {
+      // Cuando no hay progreso y el botón está comprado, mostrar el texto normal
+      paradaButton.style.backgroundColor = "#1976d2"; // Azul
+      paradaButton.textContent = "Conducir a la siguiente parada";
+    } else {
+      // Cuando no hay progreso y el botón no está comprado, mostrar el texto de desbloqueo
+     // paradaButton.style.backgroundColor = "#9e9e9e"; // Gris
+      paradaButton.textContent = "Desbloquear (Costo: 1000)";
+    }
   }
-));
+}
 
 document.getElementById("bus-costa").addEventListener("click", function() {
   if (!this.classList.contains("purchased")) {
@@ -580,6 +629,19 @@ document.getElementById("bus-costa").addEventListener("click", function() {
   }
 });
 
+document.getElementById("siguiente-parada").addEventListener("click", function() {
+  if (!this.classList.contains("purchased")) {
+    purchaseButton("siguiente-parada", 1000);
+  } else {
+    counterSubject.startProgressBar((multiplier) => {
+      counterSubject.counter = Math.round(counterSubject.counter + 100 * multiplier);
+      counterSubject.notifyObservers();
+    });
+    this.textContent = "Viajando...";
+    this.style.backgroundColor = "grey"; // Gris
+  }
+});
+
 // Llama a esta función cuando se actualice el progreso del Bus Costa
 counterSubject.addObserver(new Observer(
   () => {},
@@ -589,6 +651,15 @@ counterSubject.addObserver(new Observer(
   }
 ));
 
+counterSubject.addObserver(new Observer(
+  () => {},
+  () => {
+    updateParadaButton(); // Actualizar el botón cuando el progreso cambie
+  },
+  () => {}
+));
+
+
 function updateButtonStyles() {
   const buttons = [
     { id: "cobrar-boleto", cost: 0 },
@@ -597,13 +668,16 @@ function updateButtonStyles() {
     { id: "bus-costa", cost: 15000 },
   ];
 
+  // Actualizar los botones principales
   buttons.forEach(button => {
     const buttonElement = document.getElementById(button.id);
     const upgradeButton = document.querySelector(`.upgrade-button[data-target="${button.id}"]`);
     const upgradeCost = counterSubject.buttonUpgradeCosts[button.id];
 
     // Actualizar el texto del botón de upgrade
-    upgradeButton.textContent = `↑ (${formatNumber(upgradeCost)})`;
+    if (upgradeButton) {
+      upgradeButton.textContent = `↑ (Costo: ${formatNumber(upgradeCost)})`;
+    }
 
     // Lógica especial para el botón "Cobrar Boleto"
     if (button.id === "cobrar-boleto") {
@@ -643,11 +717,37 @@ function updateButtonStyles() {
         }
 
         // El botón de upgrade debe estar bloqueado si el botón principal no está comprado
-        upgradeButton.classList.add("blocked");
-        upgradeButton.disabled = true;
+        if (upgradeButton) {
+          upgradeButton.classList.add("blocked");
+          upgradeButton.disabled = true;
+        }
       }
     }
   });
+
+  // Actualizar los botones "Mejorar Bus" y "Mejorar Chofer"
+  const mejorarBusButton = document.getElementById("mejorar-bus");
+  const mejorarChoferButton = document.getElementById("mejorar-chofer");
+
+  if (mejorarBusButton) {
+    if (counterSubject.counter >= counterSubject.busUpgradeCost) {
+      mejorarBusButton.classList.remove("blocked");
+      mejorarBusButton.disabled = false;
+    } else {
+      mejorarBusButton.classList.add("blocked");
+      mejorarBusButton.disabled = true;
+    }
+  }
+
+  if (mejorarChoferButton) {
+    if (counterSubject.counter >= counterSubject.choferUpgradeCost) {
+      mejorarChoferButton.classList.remove("blocked");
+      mejorarChoferButton.disabled = false;
+    } else {
+      mejorarChoferButton.classList.add("blocked");
+      mejorarChoferButton.disabled = true;
+    }
+  }
 }
 
 // Llamar a esta función al cargar el estado del juego
@@ -708,7 +808,7 @@ document.getElementById("contratar-chofer").addEventListener("click", function (
       this.classList.add("purchased");
       this.disabled = false;
       this.textContent = "¡Chofer contratado!";
-      this.style.backgroundColor = "#90caf9";
+      this.style.backgroundColor = "#9e9e9e";
     } else {
       mostrarNotificacion("¡No tienes suficientes puntos para contratar al chofer!");
     }
@@ -716,16 +816,7 @@ document.getElementById("contratar-chofer").addEventListener("click", function (
 });
 
 
-document.getElementById("siguiente-parada").addEventListener("click", function() {
-  if (!this.classList.contains("purchased")) {
-    purchaseButton("siguiente-parada", 1000);
-  } else {
-    counterSubject.startProgressBar((multiplier) => {
-      counterSubject.counter = Math.round(counterSubject.counter + 100 * multiplier);
-      counterSubject.notifyObservers();
-    });
-  }
-});
+
 
 
 
@@ -739,28 +830,7 @@ document.querySelectorAll(".upgrade-button").forEach(button => {
 
 document.getElementById("mejorar-bus").addEventListener("click", upgradeBus);
 
-document.getElementById("mejorar-chofer").addEventListener("click", function () {
-  const cost = counterSubject.choferUpgradeCost;
-  if (counterSubject.upgradeChofer(cost)) {
-    const choferImage = document.getElementById("chofer-image");
-    choferImage.src = `/img/chofer${counterSubject.choferLevel}.jpg`;
-
-    const mejorarChoferButton = document.getElementById("mejorar-chofer");
-    if (counterSubject.choferLevel < counterSubject.choferMaxLevel) {
-      // Formatear el costo correctamente
-      mejorarChoferButton.textContent = `Mejorar chofer (Costo: ${formatNumber(counterSubject.choferUpgradeCost)})`;
-    } else {
-      mejorarChoferButton.textContent = "Chofer a nivel máximo";
-      mejorarChoferButton.disabled = true;
-    }
-
-    mostrarNotificacion("¡Chofer mejorado! Multiplicador de pasajeros por segundo aumentado.");
-  } else if (counterSubject.choferLevel >= counterSubject.choferMaxLevel) {
-    mostrarNotificacion("¡El chofer ya está en su nivel máximo!");
-  } else {
-    mostrarNotificacion("¡No tienes suficientes puntos para mejorar al chofer!");
-  }
-});
+document.getElementById("mejorar-chofer").addEventListener("click", upgradeChofer);
 
 function formatNumber(num) {
   if (num >= 1e12) return `${(num / 1e12).toFixed(2)} trillones`;
