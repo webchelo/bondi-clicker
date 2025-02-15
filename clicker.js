@@ -151,6 +151,7 @@ function saveGameState(subject) {
       "mejorar-bus": document.getElementById("mejorar-bus").textContent,
       "mejorar-chofer": document.getElementById("mejorar-chofer").textContent,
     },
+    buttonUpgradeCosts: subject.buttonUpgradeCosts, // Guardar los costos de mejora
   };
   localStorage.setItem('gameState', JSON.stringify(gameState));
 }
@@ -173,6 +174,12 @@ function loadGameState(subject) {
     subject.choferMultiplier = gameState.choferMultiplier;
     subject.choferUpgradeCost = gameState.choferUpgradeCost;
     subject.choferLevel = gameState.choferLevel;
+    subject.buttonUpgradeCosts = gameState.buttonUpgradeCosts || { // Cargar los costos de mejora
+      "cobrar-boleto": 50,
+      "contratar-chofer": 50,
+      "siguiente-parada": 50,
+      "bus-costa": 50,
+    };
 
     // Si el chofer ya estaba contratado, activar el incremento automático
     if (subject.purchasedButtons.has("contratar-chofer")) {
@@ -216,6 +223,13 @@ class Subject {
     this.choferUpgradePercentage = 0.1;
     this.choferLevel = 1;
     this.choferMaxLevel = 5;
+    this.buttonUpgradeCosts = {
+      "cobrar-boleto": 50,
+      "contratar-chofer": 50,
+      "siguiente-parada": 50,
+      "bus-costa": 50,
+    };
+
     
 
     // Cargar el estado guardado al iniciar
@@ -330,16 +344,22 @@ class Subject {
     return false;
   }
 
-  upgradeButton(buttonId, cost) {
-    if (this.counter >= cost) {
-      this.counter -= cost;
-      this.buttonLevels[buttonId] += 1;
+  upgradeButton(buttonId) {
+    const currentUpgradeCost = this.buttonUpgradeCosts[buttonId];
+  
+    if (this.counter >= currentUpgradeCost) {
+      this.counter -= currentUpgradeCost; // Restar el costo
+      this.buttonLevels[buttonId] += 1; // Aumentar el nivel
+      this.buttonUpgradeCosts[buttonId] = Math.round(currentUpgradeCost * 1.25); // Aumento del 25%
+
+  
       this.notifyObservers();
-      saveGameState(this); // Guardar el estado después de mejorar un botón
+      saveGameState(this); // Guardar el estado después de mejorar
   
       if (buttonId === "contratar-chofer" && this.intervalId) {
         this.restartIncrementPerSecond();
       }
+
       return true;
     }
     return false;
@@ -432,7 +452,7 @@ function mostrarNotificacion(mensaje) {
 
   setTimeout(() => {
     notificacion.classList.remove("mostrar");
-  }, 3000);
+  }, 6000);
 }
 
 // Llamar a updateButtonStyles después de comprar un botón
@@ -571,24 +591,27 @@ counterSubject.addObserver(new Observer(
 
 function updateButtonStyles() {
   const buttons = [
-    { id: "cobrar-boleto", cost: 0, upgradeCost: 50 }, // El botón "Cobrar Boleto" no tiene costo inicial
-    { id: "contratar-chofer", cost: 100, upgradeCost: 50 },
-    { id: "siguiente-parada", cost: 1000, upgradeCost: 50 },
-    { id: "bus-costa", cost: 15000, upgradeCost: 50 },
+    { id: "cobrar-boleto", cost: 0 },
+    { id: "contratar-chofer", cost: 100 },
+    { id: "siguiente-parada", cost: 1000 },
+    { id: "bus-costa", cost: 15000 },
   ];
 
   buttons.forEach(button => {
     const buttonElement = document.getElementById(button.id);
     const upgradeButton = document.querySelector(`.upgrade-button[data-target="${button.id}"]`);
+    const upgradeCost = counterSubject.buttonUpgradeCosts[button.id];
+
+    // Actualizar el texto del botón de upgrade
+    upgradeButton.textContent = `↑ (${formatNumber(upgradeCost)})`;
 
     // Lógica especial para el botón "Cobrar Boleto"
     if (button.id === "cobrar-boleto") {
-      // El botón "Cobrar Boleto" siempre está desbloqueado
       buttonElement.classList.remove("blocked");
       buttonElement.disabled = false;
 
       // Verificar si hay suficientes puntos para mejorar
-      if (counterSubject.counter >= button.upgradeCost) {
+      if (counterSubject.counter >= upgradeCost) {
         upgradeButton.classList.remove("blocked");
         upgradeButton.disabled = false;
       } else {
@@ -602,7 +625,7 @@ function updateButtonStyles() {
         buttonElement.classList.add("purchased");
 
         // Verificar si hay suficientes puntos para mejorar
-        if (counterSubject.counter >= button.upgradeCost) {
+        if (counterSubject.counter >= upgradeCost) {
           upgradeButton.classList.remove("blocked");
           upgradeButton.disabled = false;
         } else {
