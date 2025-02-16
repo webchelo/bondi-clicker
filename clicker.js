@@ -509,7 +509,7 @@ function purchaseButton(buttonId, cost) {
 
     updateButtonStyles(); // Actualizar estilos después de comprar
   } else {
-    mostrarNotificacion("¡No tienes suficientes puntos para comprar este botón!");
+    mostrarNotificacion("¡No tenés suficientes pasajeros para comprar esta mejora!");
   }
 }
 
@@ -519,7 +519,7 @@ function upgradeButton(buttonId, cost) {
     const newLevel = counterSubject.buttonLevels[buttonId];
     levelDisplay.textContent = `Nivel ${newLevel}`;
   } else {
-    mostrarNotificacion("¡No tienes suficientes puntos para mejorar este botón!");
+    mostrarNotificacion("¡No tenés suficientes pasajeros para comprar esta mejora!");
   }
 }
 
@@ -545,7 +545,7 @@ function upgradeBus() {
   } else if (counterSubject.busLevel >= 10) {
     mostrarNotificacion("¡El bondi ya está en su nivel máximo!");
   } else {
-    mostrarNotificacion("¡No tienes suficientes puntos para mejorar el bondi!");
+    mostrarNotificacion("¡No tenés suficientes pasajeros para mejorar el bondi!");
   }
 }
 
@@ -572,7 +572,7 @@ function upgradeChofer() {
   } else if (counterSubject.choferLevel >= counterSubject.choferMaxLevel) {
     mostrarNotificacion("¡El chofer ya está en su nivel máximo!");
   } else {
-    mostrarNotificacion("¡No tienes suficientes puntos para mejorar al chofer!");
+    mostrarNotificacion("¡No tenés suficientes pasajeros para mejorar al chofer!");
   }
 }
 
@@ -676,7 +676,7 @@ function updateButtonStyles() {
 
     // Actualizar el texto del botón de upgrade
     if (upgradeButton) {
-      upgradeButton.textContent = `↑ (Costo: ${formatNumber(upgradeCost)})`;
+      upgradeButton.textContent = `↑ ${formatNumber(upgradeCost)}`;
     }
 
     // Lógica especial para el botón "Cobrar Boleto"
@@ -810,7 +810,7 @@ document.getElementById("contratar-chofer").addEventListener("click", function (
       this.textContent = "¡Chofer contratado!";
       this.style.backgroundColor = "#9e9e9e";
     } else {
-      mostrarNotificacion("¡No tienes suficientes puntos para contratar al chofer!");
+      mostrarNotificacion("¡No tenés suficientes pasajeros para contratar al chofer!");
     }
   }
 });

@@ -144,6 +144,7 @@ button.purchasable:disabled {
 .level-display {
   font-size: 0.9rem;
   color: #1976d2;
+  font-weight: bold;
 }
 
 /* Estilos para las barras de progreso */
