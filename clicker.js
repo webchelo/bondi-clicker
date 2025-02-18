@@ -489,7 +489,7 @@ class Subject {
 
   lostBondi() {
     this.busMultiplier = 1;
-    this.busUpgradeCost = 10000;
+    this.busUpgradeCost = 50000;
     //this.choferUpgradePercentage = 0.1;
     this.busLevel = 1;
     //this.choferMaxLevel = 5;
