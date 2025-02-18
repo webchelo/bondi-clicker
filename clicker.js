@@ -3,7 +3,7 @@ let isInitialState = true; // Bandera para controlar el estado inicial
 
 // Variables para el título y versión
 const gameTitle = "Bondi Clicker";
-const gameVersion = "0.0.5";
+const gameVersion = "0.0.6";
 
 // Variables para los textos de los botones
 const cobrarBoletoText = "Cobrar Boleto";
