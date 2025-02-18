@@ -270,7 +270,7 @@ class Subject {
     this.busUpgradeCost = 50000
     this.choferMultiplier = 1;
     this.choferUpgradeCost = 10000;
-    this.choferUpgradePercentage = 0.1;
+    this.choferUpgradePercentage = 5; // multiplicador de pasajeros por segundo
     this.choferLevel = 1;
     this.choferMaxLevel = 5;
     this.terminalMultiplier = 1;
@@ -315,7 +315,7 @@ class Subject {
       this.intervalId = null;
     } else {
       const level = this.buttonLevels["contratar-chofer"];
-      const multiplier = this.busMultiplier * this.choferMultiplier;
+      const multiplier = this.choferMultiplier * this.terminalMultiplier;
       const intervalTime = 1000 / level;
       this.intervalId = setInterval(() => {
         const amount = Math.round(multiplier);
@@ -360,7 +360,7 @@ class Subject {
         }
       }
       this.notifyProgress();
-    }, 30);
+    }, (240 / ((this.busMultiplier * 2) + this.terminalMultiplier)));
   }
 
   startBusCostaProgressBar() {
@@ -377,13 +377,13 @@ class Subject {
         saveGameState(this); // Guardar el estado cuando el Bus Costa está listo
       }
       this.notifyBusCostaProgress();
-    }, 100);
+    }, (1000 / ((this.busMultiplier * 3) + (this.terminalMultiplier * 3))));
   }
 
   claimBusCostaReward() {
     if (this.busCostaReady) {
       const level = this.buttonLevels["bus-costa"];
-      const multiplier = getMultiplier(level) * this.busMultiplier;
+      const multiplier = getMultiplier(level) * (this.busMultiplier * 5) * (this.terminalMultiplier * 2);
       const amount = Math.round(1000 * multiplier);
       createAnimatedNumber(amount);
       this.counter = Math.round(this.counter + 1000 * multiplier);
@@ -431,7 +431,7 @@ class Subject {
     if (this.counter >= cost && this.busLevel < 10) {
       this.counter -= cost;
       this.busLevel += 1;
-      this.busMultiplier *= 2;
+      this.busMultiplier *= 1.3;
       this.busUpgradeCost *= 2;
       saveGameState(this); // Guardar el estado después de mejorar el bus
   
@@ -451,6 +451,11 @@ class Subject {
       this.choferUpgradeCost *= 2; // Duplicar el costo para el próximo nivel
       this.choferLevel += 1;
       saveGameState(this); // Guardar el estado después de mejorar al chofer
+
+      if (this.intervalId) {
+        this.restartIncrementPerSecond();
+      }
+
       this.notifyObservers();
       return true;
     } else if (this.choferLevel >= this.choferMaxLevel) {
@@ -463,7 +468,7 @@ class Subject {
   upgradeTerminal(cost) {
     if (this.counter >= cost && this.terminalLevel < this.terminalMaxLevel) {
       this.counter -= cost;
-      this.terminalMultiplier *= (1 + this.choferUpgradePercentage);
+      this.terminalMultiplier *= 5;
       this.terminalUpgradeCost *= 2; // Duplicar el costo para el próximo nivel
       this.terminalLevel += 1;
       saveGameState(this); // Guardar el estado después de mejorar al chofer
@@ -1174,7 +1179,7 @@ document.getElementById("jugar").addEventListener("click", function () {
 
     const randomOutcome = Math.random(); // Número aleatorio entre 0 y 1
 
-    if (randomOutcome < 0.8) {
+    if (randomOutcome < 0.5) {
       // 50% de probabilidad de perder algo
       applyCasinoPenalty();
     } else {
@@ -1244,8 +1249,8 @@ function applyCasinoReward() {
   const rewards = [
     {
       type: "pasajeros",
-      amount: Math.round(counterSubject.counter * 1000), // Gana 10% de los pasajeros
-      message: "¡Ganaste muchísimo dinero!",
+      amount: Math.round(counterSubject.counter * 10), // Gana 10% de los pasajeros
+      message: `¡Ganaste muchísimos pasajeros`,
     },
     {
       type: "nivel",
@@ -1423,18 +1428,18 @@ function startRandomEvent() {
     saveGameState(counterSubject); // Guardar el estado después de la penalización
   } else if (randomEvent.penalty === "half") {
     // Aplicar penalización de "mitad de ganancias"
-    const originalMultiplier = counterSubject.busMultiplier;
-    counterSubject.busMultiplier *= 0.5; // Reduce las ganancias a la mitad
+    const originalMultiplier = counterSubject.choferMultiplier;
+    counterSubject.choferMultiplier *= 0.5; // Reduce las ganancias a la mitad
     setTimeout(() => {
-      counterSubject.busMultiplier = originalMultiplier; // Restaura el multiplicador original
+      counterSubject.choferMultiplier = originalMultiplier; // Restaura el multiplicador original
       counterSubject.notifyObservers();
       saveGameState(counterSubject); // Guardar el estado después de restaurar el multiplicador
     }, randomEvent.duration);
   } else if (randomEvent.multiplier) {
-    const originalMultiplier = counterSubject.busMultiplier;
-    counterSubject.busMultiplier *= randomEvent.multiplier;
+    const originalMultiplier = counterSubject.choferMultiplier;
+    counterSubject.choferMultiplier *= randomEvent.multiplier;
     setTimeout(() => {
-      counterSubject.busMultiplier = originalMultiplier;
+      counterSubject.choferMultiplier = originalMultiplier;
       counterSubject.notifyObservers();
       saveGameState(counterSubject); // Guardar el estado después de restaurar el multiplicador
     }, randomEvent.duration);
@@ -1461,4 +1466,58 @@ document.getElementById("reset-button").addEventListener("click", () => {
   
   
     
-  
+  // Obtener el modal
+const modal = document.getElementById("info-modal");
+
+// Obtener el botón que abre el modal
+const busInfoButton = document.getElementById("bus-info");
+const choferInfoButton = document.getElementById("chofer-info");
+const terminalInfoButton = document.getElementById("terminal-info");
+const casinoInfoButton = document.getElementById("casino-info");
+
+// Obtener el elemento <span> que cierra el modal
+const closeModalButton = document.querySelector(".close-modal");
+
+// Obtener el elemento donde se mostrará el texto dentro del modal
+const modalText = document.getElementById("modal-text");
+
+// Cuando el usuario haga clic en el botón, abrir el modal
+busInfoButton.addEventListener("click", () => {
+  modal.style.display = "block";
+  updateModalText(`Lvl${counterSubject.busLevel} | Aumenta la velocidad de viaje considerablemente`);
+});
+
+// Cuando el usuario haga clic en el botón, abrir el modal
+choferInfoButton.addEventListener("click", () => {
+  modal.style.display = "block";
+  updateModalText(`Lvl${counterSubject.choferLevel} | El chofer recoge cada vez más pasajeros`);
+});
+
+// Cuando el usuario haga clic en el botón, abrir el modal
+terminalInfoButton.addEventListener("click", () => {
+  modal.style.display = "block";
+  updateModalText(`Lvl${counterSubject.terminalLevel} | Más bondis, más choferes`);
+});
+
+// Cuando el usuario haga clic en el botón, abrir el modal
+casinoInfoButton.addEventListener("click", () => {
+  modal.style.display = "block";
+  updateModalText(`¡Probabilidad de victoria: 50%!`);
+});
+
+// Cuando el usuario haga clic en <span> (x), cerrar el modal
+closeModalButton.addEventListener("click", () => {
+  modal.style.display = "none";
+});
+
+// Cuando el usuario haga clic fuera del modal, cerrarlo
+window.addEventListener("click", (event) => {
+  if (event.target === modal) {
+    modal.style.display = "none";
+  }
+});
+
+// Función para actualizar el texto del modal dinámicamente
+function updateModalText(newText) {
+  modalText.textContent = newText;
+}

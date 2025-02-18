@@ -294,16 +294,9 @@ button.purchasable:disabled {
     flex-direction: column;
   }
 
-  #bus-container {
-    order: 1;
-  }
-
-  #botones-container {
-    order: 0;
-  }
 
   .vertical-container {
-    flex-direction: column-reverse;
+    flex-direction: column;
   }
 }
 
@@ -318,4 +311,56 @@ button.purchasable:disabled {
   transition: background-color 0.3s ease, transform 0.2s ease;
   width: 100%;
   max-width: 300px;
+}
+
+/* Estilos para el modal */
+.modal {
+  display: none; /* Oculto por defecto */
+  position: fixed; /* Posición fija */
+  z-index: 1; /* Encima de todo */
+  left: 0;
+  top: 0;
+  width: 100%; /* Ancho completo */
+  height: 100%; /* Alto completo */
+  overflow: auto; /* Habilitar scroll si es necesario */
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semi-transparente */
+}
+
+/* Contenido del modal */
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* Centrado vertical y horizontal */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Ancho del contenido */
+  max-width: 600px; /* Ancho máximo */
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Botón para cerrar el modal */
+.close-modal {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close-modal:hover,
+.close-modal:focus {
+  color: black;
+  text-decoration: none;
+}
+
+.info {
+  border: 0px;
+  background-color: #90caf9;
+  border-radius: 8px;
+  margin-left: .5rem;
+  width: 2rem;
+}
+
+#modal-text {
+  text-align: center;
 }

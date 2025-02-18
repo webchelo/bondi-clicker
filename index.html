@@ -62,31 +62,52 @@
       <!-- Columna del bus -->
       <div id="bus-container">
         <img id="bus-image" src="" alt="Bus">
-        <button id="mejorar-bus" class="purchasable" data-cost="50000"></button>
+        <div style="display: flex;">
+          <button id="mejorar-bus" class="purchasable" data-cost="50000"></button>
+          <button id="bus-info" class="info">?</button>
+        </div>
       </div>
 
       <!-- Chofer debajo del bus -->
       <div id="chofer-container">
         <img id="chofer-image" src="" alt="Chofer">
-        <button id="mejorar-chofer" class="purchasable" data-cost="10000"></button>
+        <div style="display: flex;">
+          <button id="mejorar-chofer" class="purchasable" data-cost="10000"></button>
+          <button id="chofer-info" class="info">?</button>
+        </div>
       </div>
 
-            <!-- Chofer debajo del bus -->
+      <!-- Terminal debajo del chofer -->
       <div id="chofer-container">
         <img id="terminal-image" src="" alt="Terminal de bondis">
-        <button id="mejorar-terminal" class="purchasable" data-cost="50000000"></button>
+        <div style="display: flex;">
+          <button id="mejorar-terminal" class="purchasable" data-cost="50000000"></button>
+          <button id="terminal-info" class="info">?</button>
+        </div>
       </div>
 
-      <!-- Chofer debajo del bus -->
+      <!-- Casino debajo de la terminal -->
       <div id="chofer-container">
         <img id="casino-image" src="" alt="Casino"> 
-        <button id="jugar" class="purchasable" data-cost="1000">Jugar (Bajo su propia responsabilidad)</button>
+        <div style="display: flex;">
+          <button id="jugar" class="purchasable" data-cost="1000">Apostar 1.000 (Bajo su propio riesgo)</button>
+          <button id="casino-info" class="info">?</button>
+        </div>
       </div>
-      
     </div>
-    
   </div>
+
+  <!-- Botón de reinicio -->
   <button id="reset-button" style="background-color: rgb(218, 142, 142);">Reiniciar partida</button>
+
+  <!-- Modal -->
+  <div id="info-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <p id="modal-text">Aquí va el texto que puedes modificar dinámicamente.</p>
+    </div>
+  </div>
+
   <script src="clicker.js"></script>
 </body>
 </html>
