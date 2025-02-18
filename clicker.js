@@ -1,3 +1,10 @@
+const currentVersion = gameVersion; // Cambia esto cada vez que actualices tu sitio
+const storedVersion = localStorage.getItem('appVersion');
+
+if (storedVersion !== currentVersion) {
+    localStorage.clear(); // Limpia el localStorage
+    localStorage.setItem('appVersion', currentVersion); // Guarda la nueva versión
+}
 
 let isInitialState = true; // Bandera para controlar el estado inicial
 
