@@ -276,6 +276,18 @@ button.purchasable:disabled {
   object-fit: cover; /* Asegura que la imagen cubra el espacio sin distorsionarse */
 }
 
+#terminal-image {
+  width: 200px; /* Ancho fijo para la imagen del chofer */
+  height: 100px; /* Altura fija para la imagen del chofer */
+  object-fit: cover; /* Asegura que la imagen cubra el espacio sin distorsionarse */
+}
+
+#casino-image {
+  width: 200px; /* Ancho fijo para la imagen del chofer */
+  height: 80px; /* Altura fija para la imagen del chofer */
+  object-fit: cover; /* Asegura que la imagen cubra el espacio sin distorsionarse */
+}
+
 /* Estilos responsive */
 @media (max-width: 768px) {
   #app {
@@ -293,4 +305,17 @@ button.purchasable:disabled {
   .vertical-container {
     flex-direction: column-reverse;
   }
+}
+
+.gold {
+  background-color: gold;
+  color: black;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 100%;
+  max-width: 300px;
 }

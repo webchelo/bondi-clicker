@@ -8,8 +8,8 @@ const gameVersion = "0.0.4";
 // Variables para los textos de los botones
 const cobrarBoletoText = "Cobrar Boleto";
 const contratarChoferText = "Desbloquear (Costo: 100)";
-const siguienteParadaText = "Desbloquear (Costo: 1000)";
-const busCostaText = "Desbloquear (Costo: 15000)";
+const siguienteParadaText = "Desbloquear (Costo: 1.000)";
+const busCostaText = "Desbloquear (Costo: 15.000)";
 
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -36,6 +36,10 @@ document.addEventListener("DOMContentLoaded", () => {
     counterSubject.choferMultiplier = 1;
     counterSubject.choferUpgradeCost = 10000;
     counterSubject.choferLevel = 1;
+    counterSubject.terminalLevel = 1; // Nivel inicial de la terminal
+    counterSubject.terminalMultiplier = 1; // Multiplicador inicial de la terminal
+    counterSubject.terminalUpgradeCost = 50000000; // Costo inicial de mejora de la terminal
+  
   }
 
   // Actualizar el botón "Siguiente Parada" al inicio del juego
@@ -49,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
       siguienteParadaButton.disabled = false;
     } else {
       // Si no está comprado, mostrar el texto de desbloqueo
-      siguienteParadaButton.textContent = "Desbloquear (Costo: 1000)";
+      siguienteParadaButton.textContent = "Desbloquear (Costo: 1.000)";
       siguienteParadaButton.classList.add("blocked");
       siguienteParadaButton.disabled = true;
     }
@@ -66,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Asignar el título y la versión
   const titleElement = document.querySelector("h1");
-  titleElement.innerHTML = `${gameTitle} <busspan style="font-size: 1rem; font-family: Arial, Helvetica, sans-serif;">${gameVersion}</span>`;
+  titleElement.innerHTML = `${gameTitle} <span style="font-size: 1rem; font-family: Arial, Helvetica, sans-serif;">${gameVersion}</span>`;
 
   // Asignar los textos de los botones
   document.getElementById("cobrar-boleto").textContent = cobrarBoletoText;
@@ -75,10 +79,13 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("bus-costa").textContent = busCostaText;
   document.getElementById("mejorar-bus").textContent = document.querySelector('#mejorar-bus').textContent = `Mejorar bondi (Costo: ${formatNumber(counterSubject.busUpgradeCost)})`;
   document.getElementById("mejorar-chofer").textContent =  document.querySelector('#mejorar-chofer').textContent = `Mejorar chofer (Costo: ${formatNumber(counterSubject.choferUpgradeCost)})`;
+  document.getElementById("mejorar-terminal").textContent =  document.querySelector('#mejorar-terminal').textContent = `Mejorar terminal (Costo: ${formatNumber(counterSubject.terminalUpgradeCost)})`;
 
   // Asignar las imágenes
   document.getElementById("bus-image").src = `img/bus${counterSubject.busLevel}.jpg`;
   document.getElementById("chofer-image").src = `/img/chofer${counterSubject.choferLevel}.jpg`;
+  document.getElementById("terminal-image").src = `img/terminal${counterSubject.terminalLevel}.jpg`;
+  document.getElementById("casino-image").src = `/img/casino.jpg`;
 
   // Cargar el estado del juego y otras inicializaciones
   loadGameState(counterSubject);
@@ -131,15 +138,25 @@ document.addEventListener("DOMContentLoaded", () => {
     // Actualizar upgrades de bondi
     if (counterSubject.busLevel >= 10) {
       const busUpgradeButton = document.querySelector('#mejorar-bus')
-      busUpgradeButton.textContent = 'Bondi al nivel máximo'
-      busUpgradeButton.style.backgroundColor = "#90caf9";
+      busUpgradeButton.textContent = 'Bondi a nivel máximo'
+      busUpgradeButton.classList.add('gold')
+      busUpgradeButton.classList.remove('purchasable')
     }
 
-    // Actualizar upgrades de bondi
+    // Actualizar upgrades de chofer
     if (counterSubject.choferLevel >= 5) {
-      const busUpgradeButton = document.querySelector('#mejorar-chofer')
-      busUpgradeButton.textContent = 'Chofer al nivel máximo'
-      busUpgradeButton.style.backgroundColor = "#90caf9";
+      const choferUpgradeButton = document.querySelector('#mejorar-chofer')
+      choferUpgradeButton.textContent = 'Chofer a nivel máximo'
+      choferUpgradeButton.classList.add('gold')
+      choferUpgradeButton.classList.remove('purchasable')
+    }
+
+    // Actualizar upgrades de la terminal
+    if (counterSubject.terminalLevel >= 3) {
+      const terminalUpgradeButton = document.querySelector('#mejorar-terminal')
+      terminalUpgradeButton.textContent = 'Terminal a nivel máximo'
+      terminalUpgradeButton.classList.add('gold')
+      terminalUpgradeButton.classList.remove('purchasable')
     }
 });
 
@@ -161,6 +178,9 @@ function saveGameState(subject) {
     choferMultiplier: subject.choferMultiplier,
     choferUpgradeCost: subject.choferUpgradeCost,
     choferLevel: subject.choferLevel,
+    terminalLevel: subject.terminalLevel, // Guardar el nivel de la terminal
+    terminalMultiplier: subject.terminalMultiplier, // Guardar el multiplicador de la terminal
+    terminalUpgradeCost: subject.terminalUpgradeCost, // Guardar el costo de mejora de la terminal
     buttonTexts: {
       "cobrar-boleto": document.getElementById("cobrar-boleto").textContent,
       "contratar-chofer": document.getElementById("contratar-chofer").textContent,
@@ -192,6 +212,9 @@ function loadGameState(subject) {
     subject.choferMultiplier = gameState.choferMultiplier;
     subject.choferUpgradeCost = gameState.choferUpgradeCost;
     subject.choferLevel = gameState.choferLevel;
+    subject.terminalLevel = gameState.terminalLevel || 1; // Cargar el nivel de la terminal (valor por defecto 1 si no existe)
+    subject.terminalMultiplier = gameState.terminalMultiplier || 1; // Cargar el multiplicador de la terminal (valor por defecto 1 si no existe)
+    subject.terminalUpgradeCost = gameState.terminalUpgradeCost || 50000000; // Cargar el costo de mejora de la terminal (valor por defecto 50000000 si no existe)
     subject.buttonUpgradeCosts = gameState.buttonUpgradeCosts || { // Cargar los costos de mejora
       "cobrar-boleto": 50,
       "contratar-chofer": 50,
@@ -250,6 +273,11 @@ class Subject {
     this.choferUpgradePercentage = 0.1;
     this.choferLevel = 1;
     this.choferMaxLevel = 5;
+    this.terminalMultiplier = 1;
+    this.terminalUpgradeCost = 50000000;
+    this.terminalUpgradePercentage = 0.1;
+    this.terminalLevel = 1;
+    this.terminalMaxLevel = 3;
     this.buttonUpgradeCosts = {
       "cobrar-boleto": 50,
       "contratar-chofer": 50,
@@ -432,6 +460,92 @@ class Subject {
     return false;
   }
 
+  upgradeTerminal(cost) {
+    if (this.counter >= cost && this.terminalLevel < this.terminalMaxLevel) {
+      this.counter -= cost;
+      this.terminalMultiplier *= (1 + this.choferUpgradePercentage);
+      this.terminalUpgradeCost *= 2; // Duplicar el costo para el próximo nivel
+      this.terminalLevel += 1;
+      saveGameState(this); // Guardar el estado después de mejorar al chofer
+      this.notifyObservers();
+      return true;
+    } else if (this.terminalLevel >= this.terminalMaxLevel) {
+      mostrarNotificacion("¡La terminal ya está en su nivel máximo!");
+      return false;
+    }
+    return false;
+  }
+
+  lostChofer() {
+    this.choferMultiplier = 1;
+    this.choferUpgradeCost = 10000;
+    //this.choferUpgradePercentage = 0.1;
+    this.choferLevel = 1;
+    //this.choferMaxLevel = 5;
+    saveGameState(this); // Guardar el estado después de mejorar al chofer
+    this.notifyObservers();
+    return true
+  }
+
+  lostBondi() {
+    this.busMultiplier = 1;
+    this.busUpgradeCost = 10000;
+    //this.choferUpgradePercentage = 0.1;
+    this.busLevel = 1;
+    //this.choferMaxLevel = 5;
+    saveGameState(this); // Guardar el estado después de mejorar al chofer
+    this.notifyObservers();
+    return true
+  }
+
+  lostTerminal() {
+    this.terminalMultiplier = 1;
+    this.terminalUpgradeCost = 50000000;
+    //this.terminalUpgradePercentage = 0.1;
+    this.terminalLevel = 1;
+    //this.terminalMaxLevel = 3;
+    saveGameState(this); // Guardar el estado después de mejorar al chofer
+    this.notifyObservers();
+    return true
+  }
+
+  gainBondi() {
+    if (this.busLevel < 10) {
+      this.busLevel += 1;
+      this.busMultiplier *= 2;
+      this.busUpgradeCost *= 2;
+      saveGameState(this); // Guardar el estado después de mejorar el bus
+  
+      if (this.intervalId) {
+        this.restartIncrementPerSecond();
+      }
+      this.notifyObservers();
+      return true;
+    }
+  }
+
+  gainChofer() {
+    if(this.choferLevel < 5) {
+      this.choferMultiplier *= (1 + this.choferUpgradePercentage);
+      this.choferUpgradeCost *= 2; // Duplicar el costo para el próximo nivel
+      this.choferLevel += 1;
+      saveGameState(this); // Guardar el estado después de mejorar al chofer
+      this.notifyObservers();
+      return true;
+    }
+  }
+
+  gainTerminal() {
+    if (this.terminalLevel < 3) {
+      this.terminalMultiplier *= (1 + this.choferUpgradePercentage);
+      this.terminalUpgradeCost *= 2; // Duplicar el costo para el próximo nivel
+      this.terminalLevel += 1;
+      saveGameState(this); // Guardar el estado después de mejorar al chofer
+      this.notifyObservers();
+      return true;
+    }
+
+  }
 
   notifyProgress() {
     this.observers.forEach(observer => observer.updateProgress(this.progress));
@@ -518,6 +632,8 @@ function upgradeButton(buttonId, cost) {
     const levelDisplay = document.getElementById(`${buttonId}-level`);
     const newLevel = counterSubject.buttonLevels[buttonId];
     levelDisplay.textContent = `Nivel ${newLevel}`;
+    updateButtonStyles(); // Actualizar los estilos de los botones
+    counterSubject.notifyObservers(); // Notificar a los observadores para actualizar la UI
   } else {
     mostrarNotificacion("¡No tenés suficientes pasajeros para comprar esta mejora!");
   }
@@ -527,7 +643,7 @@ function upgradeBus() {
   const cost = counterSubject.busUpgradeCost;
   if (counterSubject.upgradeBus(cost)) {
     const busImage = document.getElementById("bus-image");
-    busImage.src = `img/bus${counterSubject.busLevel}.jpg`;
+    busImage.src = `img/bus${counterSubject.busLevel}.jpg`; // Actualizar la imagen del bus
 
     const mejorarBusButton = document.getElementById("mejorar-bus");
     
@@ -535,13 +651,40 @@ function upgradeBus() {
       mejorarBusButton.textContent = `Mejorar bondi (Costo: ${formatNumber(counterSubject.busUpgradeCost)})`;
     } else {
       mejorarBusButton.textContent = "Bondi a nivel máximo";
-      mejorarBusButton.style.backgroundColor = 'gold'
-      mejorarBusButton.style.color = 'black'
-      mejorarBusButton.disabled = true;
+      mejorarBusButton.classList.add('gold')
+      mejorarBusButton.classList.remove('purchasable')
+    
+      //mejorarBusButton.disabled = true;
     }
 
-    // Guardar el estado del botón en localStorage
     saveGameState(counterSubject);
+    //counterSubject.notifyObservers(); // Notificar a los observadores para actualizar la UI
+  } else if (counterSubject.busLevel >= 10) {
+    mostrarNotificacion("¡El bondi ya está en su nivel máximo!");
+  } else {
+    mostrarNotificacion("¡No tenés suficientes pasajeros para mejorar el bondi!");
+  }
+}
+
+function gainBondi() {
+  if (counterSubject.gainBondi()) {
+    const busImage = document.getElementById("bus-image");
+    busImage.src = `img/bus${counterSubject.busLevel}.jpg`; // Actualizar la imagen del bus
+
+    const mejorarBusButton = document.getElementById("mejorar-bus");
+    
+    if (counterSubject.busLevel < 10) {
+      mejorarBusButton.textContent = `Mejorar bondi (Costo: ${formatNumber(counterSubject.busUpgradeCost)})`;
+    } else {
+      mejorarBusButton.textContent = "Bondi a nivel máximo";
+      mejorarBusButton.classList.add('gold')
+      mejorarBusButton.classList.remove('purchasable')
+    
+      //mejorarBusButton.disabled = true;
+    }
+
+    saveGameState(counterSubject);
+    //counterSubject.notifyObservers(); // Notificar a los observadores para actualizar la UI
   } else if (counterSubject.busLevel >= 10) {
     mostrarNotificacion("¡El bondi ya está en su nivel máximo!");
   } else {
@@ -562,19 +705,187 @@ function upgradeChofer() {
       mejorarChoferButton.textContent = `Mejorar chofer (Costo: ${formatNumber(counterSubject.choferUpgradeCost)})`;
     } else {
       mejorarChoferButton.textContent = "Chofer a nivel máximo";
-      mejorarChoferButton.style.backgroundColor = 'gold'
-      mejorarChoferButton.style.color = 'black'
-      mejorarChoferButton.disabled = true;
+      mejorarChoferButton.classList.add('gold')
+      mejorarChoferButton.classList.remove('purchasable')
+      //mejorarChoferButton.disabled = true;
     }
 
     // Guardar el estado del botón en localStorage
     saveGameState(counterSubject);
+    counterSubject.notifyObservers(); // Notificar a los observadores para actualizar la UI
   } else if (counterSubject.choferLevel >= counterSubject.choferMaxLevel) {
     mostrarNotificacion("¡El chofer ya está en su nivel máximo!");
   } else {
     mostrarNotificacion("¡No tenés suficientes pasajeros para mejorar al chofer!");
   }
 }
+
+function gainChofer() {
+  if (counterSubject.gainChofer()) {
+    const choferImage = document.getElementById("chofer-image");
+    choferImage.src = `img/chofer${counterSubject.choferLevel}.jpg`;
+
+    const mejorarChoferButton = document.getElementById("mejorar-chofer");
+    if (counterSubject.choferLevel < 5) {
+      // Formatear el costo correctamente
+      mejorarChoferButton.textContent = `Mejorar chofer (Costo: ${formatNumber(counterSubject.choferUpgradeCost)})`;
+    } else {
+      mejorarChoferButton.textContent = "Chofer a nivel máximo";
+      mejorarChoferButton.classList.add('gold')
+      mejorarChoferButton.classList.remove('purchasable')
+      //mejorarChoferButton.disabled = true;
+    }
+
+    // Guardar el estado del botón en localStorage
+    saveGameState(counterSubject);
+    counterSubject.notifyObservers(); // Notificar a los observadores para actualizar la UI
+  } else if (counterSubject.choferLevel >= counterSubject.choferMaxLevel) {
+    mostrarNotificacion("¡El chofer ya está en su nivel máximo!");
+  } else {
+    mostrarNotificacion("¡No tenés suficientes pasajeros para mejorar al chofer!");
+  }
+}
+
+function upgradeTerminal() {
+  const cost = counterSubject.terminalUpgradeCost;
+  if (counterSubject.upgradeTerminal(cost)) {
+    const terminalImage = document.getElementById("terminal-image");
+    terminalImage.src = `img/terminal${counterSubject.terminalLevel}.jpg`;
+
+    const mejorarTerminalButton = document.getElementById("mejorar-terminal");
+    if (counterSubject.terminalLevel < 3) {
+      // Formatear el costo correctamente
+      mejorarTerminalButton.textContent = `Mejorar Terminal (Costo: ${formatNumber(counterSubject.terminalUpgradeCost)})`;
+    } else {
+      mejorarTerminalButton.textContent = "Terminal a nivel máximo";
+      mejorarTerminalButton.classList.add('gold')
+      mejorarTerminalButton.classList.remove('purchasable')
+      //mejorarTerminalButton.disabled = true;
+    }
+
+    // Guardar el estado del botón en localStorage
+    saveGameState(counterSubject);
+    counterSubject.notifyObservers(); // Notificar a los observadores para actualizar la UI
+  } else if (counterSubject.terminalLevel >= counterSubject.terminalMaxLevel) {
+    mostrarNotificacion("¡La terminal ya está en su nivel máximo!");
+  } else {
+    mostrarNotificacion("¡No tenés suficientes pasajeros para mejorar la terminal!");
+  }
+}
+
+function gainTerminal() {
+  if (counterSubject.gainTerminal()) {
+    const terminalImage = document.getElementById("terminal-image");
+    terminalImage.src = `img/terminal${counterSubject.terminalLevel}.jpg`;
+
+    const mejorarTerminalButton = document.getElementById("mejorar-terminal");
+    if (counterSubject.terminalLevel < 3) {
+      // Formatear el costo correctamente
+      mejorarTerminalButton.textContent = `Mejorar Terminal (Costo: ${formatNumber(counterSubject.terminalUpgradeCost)})`;
+    } else {
+      mejorarTerminalButton.textContent = "Terminal a nivel máximo";
+      mejorarTerminalButton.classList.add('gold')
+      mejorarTerminalButton.classList.remove('purchasable')
+      //mejorarTerminalButton.disabled = true;
+    }
+
+    // Guardar el estado del botón en localStorage
+    saveGameState(counterSubject);
+    counterSubject.notifyObservers(); // Notificar a los observadores para actualizar la UI
+  } else if (counterSubject.terminalLevel >= counterSubject.terminalMaxLevel) {
+    mostrarNotificacion("¡La terminal ya está en su nivel máximo!");
+  } else {
+    mostrarNotificacion("¡No tenés suficientes pasajeros para mejorar la terminal!");
+  }
+}
+
+function lostChofer() {
+  if (counterSubject.lostChofer()) {
+    //counterSubject.lostChofer()
+    const choferImage = document.getElementById("chofer-image");
+    choferImage.src = `img/chofer${counterSubject.choferLevel}.jpg`;
+
+    const mejorarChoferButton = document.getElementById("mejorar-chofer");
+    if (counterSubject.choferLevel < 5) {
+      // Formatear el costo correctamente
+      mejorarChoferButton.textContent = `Mejorar chofer (Costo: ${formatNumber(counterSubject.choferUpgradeCost)})`;
+      mejorarChoferButton.classList.remove('gold')
+      mejorarChoferButton.classList.add('purchasable')
+      //mejorarChoferButton.style.color = 'white'
+      
+    } else {
+      mejorarChoferButton.textContent = "Chofer a nivel máximo";
+      mejorarChoferButton.classList.add('gold')
+      mejorarChoferButton.classList.remove('purchasable')
+      //mejorarChoferButton.disabled = true;
+    }
+
+    // Guardar el estado del botón en localStorage
+    saveGameState(counterSubject);
+    counterSubject.notifyObservers(); // Notificar a los observadores para actualizar la UI
+  } else if (counterSubject.choferLevel >= counterSubject.choferMaxLevel) {
+    mostrarNotificacion("¡El chofer ya está en su nivel máximo!");
+  } else {
+    mostrarNotificacion("¡No tenés suficientes pasajeros para mejorar al chofer!");
+  }
+}
+
+function lostBondi() {
+  if (counterSubject.lostBondi()) {
+    const busImage = document.getElementById("bus-image");
+    busImage.src = `img/bus${counterSubject.busLevel}.jpg`; // Actualizar la imagen del bus
+
+    const mejorarBusButton = document.getElementById("mejorar-bus");
+    
+    if (counterSubject.busLevel < 10) {
+      mejorarBusButton.textContent = `Mejorar bondi (Costo: ${formatNumber(counterSubject.busUpgradeCost)})`;
+      mejorarBusButton.classList.remove('gold')
+      mejorarBusButton.classList.add('purchasable')
+    } else {
+      mejorarBusButton.textContent = "Bondi a nivel máximo";
+      mejorarBusButton.classList.add('gold')
+      mejorarBusButton.classList.remove('purchasable')
+    
+      //mejorarBusButton.disabled = true;
+    }
+
+    saveGameState(counterSubject);
+    counterSubject.notifyObservers(); // Notificar a los observadores para actualizar la UI
+    //counterSubject.notifyObservers(); // Notificar a los observadores para actualizar la UI
+  } else if (counterSubject.busLevel >= 10) {
+    mostrarNotificacion("¡El bondi ya está en su nivel máximo!");
+  } else {
+    mostrarNotificacion("¡No tenés suficientes pasajeros para mejorar el bondi!");
+  }
+}
+
+function lostTerminal() {
+  if (counterSubject.lostTerminal()) {
+    const terminalImage = document.getElementById("terminal-image");
+    terminalImage.src = `img/terminal${counterSubject.terminalLevel}.jpg`;
+
+    const mejorarTerminalButton = document.getElementById("mejorar-terminal");
+    if (counterSubject.terminalLevel < 3) {
+      // Formatear el costo correctamente
+      mejorarTerminalButton.textContent = `Mejorar Terminal (Costo: ${formatNumber(counterSubject.terminalUpgradeCost)})`;
+      mejorarTerminalButton.classList.remove('gold')
+      mejorarTerminalButton.classList.add('purchasable')
+    } else {
+      mejorarTerminalButton.textContent = "Terminal a nivel máximo";
+      mejorarTerminalButton.classList.add('gold')
+      mejorarTerminalButton.classList.remove('purchasable')
+    }
+
+    // Guardar el estado del botón en localStorage
+    saveGameState(counterSubject);
+    counterSubject.notifyObservers(); // Notificar a los observadores para actualizar la UI
+  } else if (counterSubject.terminalLevel >= counterSubject.terminalMaxLevel) {
+    mostrarNotificacion("¡La terminal ya está en su nivel máximo!");
+  } else {
+    mostrarNotificacion("¡No tenés suficientes pasajeros para mejorar la terminal!");
+  }
+}
+
 
 function updateBusCostaButton() {
   const busCostaButton = document.getElementById("bus-costa");
@@ -608,7 +919,7 @@ function updateParadaButton() {
     } else {
       // Cuando no hay progreso y el botón no está comprado, mostrar el texto de desbloqueo
      // paradaButton.style.backgroundColor = "#9e9e9e"; // Gris
-      paradaButton.textContent = "Desbloquear (Costo: 1000)";
+      paradaButton.textContent = "Desbloquear (Costo: 1.000)";
     }
   }
 }
@@ -728,6 +1039,8 @@ function updateButtonStyles() {
   // Actualizar los botones "Mejorar Bus" y "Mejorar Chofer"
   const mejorarBusButton = document.getElementById("mejorar-bus");
   const mejorarChoferButton = document.getElementById("mejorar-chofer");
+  const mejorarTerminalButton = document.getElementById("mejorar-terminal");
+  const casino = document.getElementById("jugar");
 
   if (mejorarBusButton) {
     if (counterSubject.counter >= counterSubject.busUpgradeCost) {
@@ -746,6 +1059,26 @@ function updateButtonStyles() {
     } else {
       mejorarChoferButton.classList.add("blocked");
       mejorarChoferButton.disabled = true;
+    }
+  }
+
+  if (mejorarTerminalButton) {
+    if (counterSubject.counter >= counterSubject.terminalUpgradeCost) {
+      mejorarTerminalButton.classList.remove("blocked");
+      mejorarTerminalButton.disabled = false;
+    } else {
+      mejorarTerminalButton.classList.add("blocked");
+      mejorarTerminalButton.disabled = true;
+    }
+  }
+
+  if (casino) {
+    if (counterSubject.counter >= 1000) {
+      casino.classList.remove("blocked");
+      casino.disabled = false;
+    } else {
+      casino.classList.add("blocked");
+      casino.disabled = true;
     }
   }
 }
@@ -832,6 +1165,133 @@ document.getElementById("mejorar-bus").addEventListener("click", upgradeBus);
 
 document.getElementById("mejorar-chofer").addEventListener("click", upgradeChofer);
 
+document.getElementById("mejorar-terminal").addEventListener("click", upgradeTerminal);
+
+document.getElementById("jugar").addEventListener("click", function () {
+  if (counterSubject.counter >= 1000) { // Costo mínimo para jugar
+    counterSubject.counter -= 1000; // Costo fijo por jugar
+    counterSubject.notifyObservers(); // Notificar a los observadores para actualizar la UI
+
+    const randomOutcome = Math.random(); // Número aleatorio entre 0 y 1
+
+    if (randomOutcome < 0.8) {
+      // 50% de probabilidad de perder algo
+      applyCasinoPenalty();
+    } else {
+      // 50% de probabilidad de ganar algo
+      applyCasinoReward();
+    }
+  } else {
+    mostrarNotificacion("¡Necesitás al menos 1.000 pasajeros para jugar!");
+  }
+});
+
+function applyCasinoPenalty() {
+  const penalties = [
+    {
+      type: "pasajeros",
+      amount: Math.round(counterSubject.counter * 0.1), // Pierde 10% de los pasajeros
+      message: "¡Perdiste todos tus pasajeros!",
+    },
+    {
+      type: "nivel",
+      target: "bus",
+      amount: 1,
+      message: "¡Perdiste tu bondi!",
+    },
+    {
+      type: "nivel",
+      target: "chofer",
+      amount: 1,
+      message: "¡Perdiste a tu chofer!",
+    },
+    {
+      type: "nivel",
+      target: "terminal",
+      amount: 1,
+      message: "¡Perdiste tu terminal!",
+    },
+  ];
+
+  const selectedPenalty = penalties[Math.floor(Math.random() * penalties.length)];
+
+  if (selectedPenalty.type === "pasajeros") {
+    //counterSubject.counter = Math.max(0, counterSubject.counter - selectedPenalty.amount);
+    counterSubject.counter = 0;
+    mostrarNotificacion(selectedPenalty.message);
+  } else if (selectedPenalty.type === "nivel") {
+    if (selectedPenalty.target === "bus" && counterSubject.busLevel > 1) {
+      lostBondi()
+      mostrarNotificacion(selectedPenalty.message);
+    } else if (selectedPenalty.target === "chofer" && counterSubject.choferLevel > 1) {
+      lostChofer()
+      mostrarNotificacion(selectedPenalty.message);
+    } else if (selectedPenalty.target === "terminal" && counterSubject.terminalLevel > 1) {
+      lostTerminal()
+      mostrarNotificacion(selectedPenalty.message);
+    } else {
+      counterSubject.counter = 0;
+      mostrarNotificacion("¡Perdiste todos tus pasajeros!");
+    }
+  }
+
+  saveGameState(counterSubject);
+  updateButtonStyles(); // Actualizar los estilos de los botones
+  counterSubject.notifyObservers(); // Notificar a los observadores para actualizar la UI
+}
+
+function applyCasinoReward() {
+  const rewards = [
+    {
+      type: "pasajeros",
+      amount: Math.round(counterSubject.counter * 0.1), // Gana 10% de los pasajeros
+      message: "¡Ganaste el 10% de tus pasajeros en el casino!",
+    },
+    {
+      type: "nivel",
+      target: "bus",
+      amount: 1,
+      message: "¡Ganaste un nivel del bondi en el casino!",
+    },
+    {
+      type: "nivel",
+      target: "chofer",
+      amount: 1,
+      message: "¡Ganaste un nivel del chofer en el casino!",
+    },
+    /*{
+      type: "nivel",
+      target: "terminal",
+      amount: 1,
+      message: "¡Ganaste un nivel de la terminal en el casino!",
+    },*/
+  ];
+
+  const selectedReward = rewards[Math.floor(Math.random() * rewards.length)];
+
+  if (selectedReward.type === "pasajeros") {
+    counterSubject.counter += selectedReward.amount;
+    mostrarNotificacion(selectedReward.message);
+  } else if (selectedReward.type === "nivel") {
+    if (selectedReward.target === "bus" && counterSubject.busLevel < 10) {
+      gainBondi()
+      mostrarNotificacion(selectedReward.message);
+    } else if (selectedReward.target === "chofer" && counterSubject.choferLevel < 5) {
+      gainChofer()
+      mostrarNotificacion(selectedReward.message);
+    } else if (selectedReward.target === "terminal" && counterSubject.terminalLevel < 3) {
+      gainTerminal()
+      mostrarNotificacion(selectedReward.message);
+    } else {
+      mostrarNotificacion("¡Ya tenés el nivel máximo en el casino!");
+    }
+  }
+
+  saveGameState(counterSubject);
+  updateButtonStyles(); // Actualizar los estilos de los botones
+  counterSubject.notifyObservers(); // Notificar a los observadores para actualizar la UI
+}
+
 function formatNumber(num) {
   if (num >= 1e12) return `${(num / 1e12).toFixed(2)} trillones`;
   if (num >= 1e9) return `${(num / 1e9).toFixed(2)} billones`;
@@ -842,11 +1302,20 @@ function formatNumber(num) {
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "b" || event.key === "B") {
-    counterSubject.counter += 100000;
+    counterSubject.counter += 1000;
     counterSubject.notifyObservers();
-    mostrarNotificacion("¡100,000 puntos agregados!");
+    mostrarNotificacion("¡1,000 puntos agregados!");
   }
 });
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "v" || event.key === "V") {
+    counterSubject.counter += 100000000;
+    counterSubject.notifyObservers();
+    mostrarNotificacion("¡100,000,000 puntos agregados!");
+  }
+});
+
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "n" || event.key === "N") {
