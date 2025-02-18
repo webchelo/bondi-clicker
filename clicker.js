@@ -1259,12 +1259,12 @@ function applyCasinoReward() {
       amount: 1,
       message: "¡Ganaste un nivel del chofer en el casino!",
     },
-    /*{
+    {
       type: "nivel",
       target: "terminal",
       amount: 1,
       message: "¡Ganaste un nivel de la terminal en el casino!",
-    },*/
+    },
   ];
 
   const selectedReward = rewards[Math.floor(Math.random() * rewards.length)];
