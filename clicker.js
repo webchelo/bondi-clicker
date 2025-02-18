@@ -469,7 +469,7 @@ class Subject {
     if (this.counter >= cost && this.terminalLevel < this.terminalMaxLevel) {
       this.counter -= cost;
       this.terminalMultiplier *= 5;
-      this.terminalUpgradeCost *= 2; // Duplicar el costo para el próximo nivel
+      this.terminalUpgradeCost *= 10; // Duplicar el costo para el próximo nivel
       this.terminalLevel += 1;
       saveGameState(this); // Guardar el estado después de mejorar al chofer
       this.notifyObservers();
