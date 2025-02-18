@@ -55,6 +55,10 @@
       <div class="progress-bar blocked" id="bus-costa-bar">
         <div id="bus-costa-fill" class="progress-bar-fill">0%</div>
       </div>
+
+      <button id="mapa" class="button2 titilar"><span>Mapa de la ciudad</span></button>
+      <button id="ascender" class="button2 titilar"><span>Ascender</span></button>
+      <div id="paisaje"></div>
     </div>
 
     <!-- Contenedor vertical para el bus y el chofer -->
@@ -108,6 +112,27 @@
     </div>
   </div>
 
+    <!-- Modal para mapa -->
+  <div id="mapa-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2>Mapa <span id="porcentaje">0%</span> completado</h2>
+      <div class="modal-buttons">
+        <button class="random-button" style="top: 80%; left: 30%;" id="parada1">Comprar (500 mill)</button>
+        <button class="random-button" style="top: 40%; left: 50%;" id="parada2">Comprar (1 bill)</button>
+        <button class="random-button" style="top: 20%; left: 70%;" id="parada3">Comprar (100 bill)</button>
+        <button class="random-button" style="top: 10%; left: 10%;" id="parada4">Comprar (100 trill)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para ascender -->
+  <div id="ascender-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <p id="modal-text">¿Seguro que querés ascender? Perderás todo el progreso a cambio de una significante mejora global</p>
+    </div>
+  </div>
   <script src="clicker.js"></script>
 </body>
 </html>

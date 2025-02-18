@@ -11,6 +11,14 @@ const contratarChoferText = "Desbloquear (Costo: 100)";
 const siguienteParadaText = "Desbloquear (Costo: 1.000)";
 const busCostaText = "Desbloquear (Costo: 15.000)";
 
+const parada1 = document.querySelector('#parada1')
+const parada2 = document.querySelector('#parada2')
+const parada3 = document.querySelector('#parada3')
+const parada4 = document.querySelector('#parada4')
+const paisaje = document.querySelector('#paisaje')
+const porcentaje = document.querySelector('#porcentaje')
+const ascenderButton = document.querySelector('#ascender')
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const savedState = localStorage.getItem('gameState');
@@ -178,9 +186,9 @@ function saveGameState(subject) {
     choferMultiplier: subject.choferMultiplier,
     choferUpgradeCost: subject.choferUpgradeCost,
     choferLevel: subject.choferLevel,
-    terminalLevel: subject.terminalLevel, // Guardar el nivel de la terminal
-    terminalMultiplier: subject.terminalMultiplier, // Guardar el multiplicador de la terminal
-    terminalUpgradeCost: subject.terminalUpgradeCost, // Guardar el costo de mejora de la terminal
+    terminalLevel: subject.terminalLevel,
+    terminalMultiplier: subject.terminalMultiplier,
+    terminalUpgradeCost: subject.terminalUpgradeCost,
     buttonTexts: {
       "cobrar-boleto": document.getElementById("cobrar-boleto").textContent,
       "contratar-chofer": document.getElementById("contratar-chofer").textContent,
@@ -189,11 +197,11 @@ function saveGameState(subject) {
       "mejorar-bus": document.getElementById("mejorar-bus").textContent,
       "mejorar-chofer": document.getElementById("mejorar-chofer").textContent,
     },
-    buttonUpgradeCosts: subject.buttonUpgradeCosts, // Guardar los costos de mejora
+    buttonUpgradeCosts: subject.buttonUpgradeCosts,
+    purchasedStops: Array.from(document.querySelectorAll('.mapa-purchased')).map(stop => stop.id) // Guardar las paradas compradas
   };
   localStorage.setItem('gameState', JSON.stringify(gameState));
 }
-
 
   
 function loadGameState(subject) {
@@ -221,6 +229,23 @@ function loadGameState(subject) {
       "siguiente-parada": 50,
       "bus-costa": 50,
     };
+    subject.purchasedStops = new Set(gameState.purchasedStops || []); 
+
+    // Restaurar las paradas compradas en la UI
+    gameState.purchasedStops.forEach(stopId => {
+      const stopElement = document.getElementById(stopId);
+      if (stopElement) {
+        stopElement.classList.add('mapa-purchased');
+        stopElement.textContent = getStopName(stopId); // Función para obtener el nombre de la parada
+      }
+    });
+
+    // Actualizar el paisaje según la última parada comprada
+    const lastStop = gameState.purchasedStops[gameState.purchasedStops.length - 1];
+    if (lastStop) {
+      paisaje.classList.add(lastStop);
+      porcentaje.textContent = getStopPercentage(lastStop); // Función para obtener el porcentaje
+    }
 
     // Si el chofer ya estaba contratado, activar el incremento automático
     if (subject.purchasedButtons.has("contratar-chofer")) {
@@ -244,8 +269,11 @@ function loadGameState(subject) {
         }
       });
     }
+
+
   }
 }
+
 
 
 class Subject {
@@ -259,6 +287,7 @@ class Subject {
     this.busCostaProgress = 0;
     this.busCostaReady = false;
     this.purchasedButtons = new Set();
+    this.purchasedStops = new Set();
     this.buttonLevels = {
       "cobrar-boleto": 1,
       "contratar-chofer": 1,
@@ -1521,3 +1550,167 @@ window.addEventListener("click", (event) => {
 function updateModalText(newText) {
   modalText.textContent = newText;
 }
+
+
+
+
+// Obtener el modal de 
+const mapaModal = document.getElementById("mapa-modal");
+
+// Obtener el botón que abre el modal de 
+const mapaButton = document.getElementById("mapa");
+
+// Obtener el elemento <span> que cierra el modal de 
+const closeMapaModal = mapaModal.querySelector(".close-modal");
+
+// Cuando el usuario haga clic en el botón, abrir el modal de 
+mapaButton.addEventListener("click", () => {
+  mapaModal.style.display = "block";
+});
+
+// Cuando el usuario haga clic en <span> (x), cerrar el modal de 
+closeMapaModal.addEventListener("click", () => {
+  mapaModal.style.display = "none";
+});
+
+// Cuando el usuario haga clic fuera del modal, cerrarlo
+window.addEventListener("click", (event) => {
+  if (event.target === mapaModal) {
+    mapaModal.style.display = "none";
+  }
+});
+
+
+
+
+parada1.addEventListener('click', () => {
+  if (counterSubject.counter >= 500000000) {
+    counterSubject.counter -= 500000000;
+    parada1.classList.add('mapa-purchased');
+    parada1.textContent = 'Barrio Municipal';
+    paisaje.classList.add('parada1');
+    porcentaje.textContent = '25%';
+    counterSubject.purchasedStops.add('parada1'); // Agregar la parada al estado
+    counterSubject.notifyObservers();
+    saveGameState(counterSubject);
+  }
+});
+
+parada2.addEventListener('click', () => {
+  if (counterSubject.counter >= 1000000000 && counterSubject.purchasedStops.has('parada1')) {
+    counterSubject.counter -= 1000000000;
+    parada2.classList.add('mapa-purchased');
+    parada2.textContent = 'Oficinas';
+    paisaje.classList.remove('parada1');
+    paisaje.classList.add('parada2');
+    porcentaje.textContent = '50%';
+    counterSubject.purchasedStops.add('parada2'); // Agregar la parada al estado
+    counterSubject.notifyObservers();
+    saveGameState(counterSubject);
+  }
+});
+
+parada3.addEventListener('click', () => {
+  if (counterSubject.counter >= 100000000000 && counterSubject.purchasedStops.has('parada2')) {
+    counterSubject.counter -= 100000000000;
+    parada3.classList.add('mapa-purchased');
+    parada3.textContent = 'Centro Comercial';
+    paisaje.classList.remove('parada2');
+    paisaje.classList.add('parada3');
+    porcentaje.textContent = '75%';
+    counterSubject.purchasedStops.add('parada3'); // Agregar la parada al estado
+    counterSubject.notifyObservers();
+    saveGameState(counterSubject);
+  }
+});
+
+parada4.addEventListener('click', () => {
+  if (counterSubject.counter >= 1000000000000 && counterSubject.purchasedStops.has('parada3')) {
+    counterSubject.counter -= 1000000000000;
+    parada4.classList.add('mapa-purchased');
+    parada4.textContent = 'Las Universidades';
+    paisaje.classList.remove('parada3');
+    paisaje.classList.add('parada4');
+    porcentaje.textContent = '100%';
+    mapaButton.classList.remove('titilar');
+    mapaButton.classList.add('mapa-purchased');
+    mapaButton.textContent = 'Mapa completo';
+    counterSubject.purchasedStops.add('parada4'); // Agregar la parada al estado
+    counterSubject.notifyObservers();
+    saveGameState(counterSubject);
+  }
+});
+
+function getStopName(stopId) {
+  const stopNames = {
+    'parada1': 'Barrio Municipal',
+    'parada2': 'Oficinas',
+    'parada3': 'Centro Comercial',
+    'parada4': 'Las Universidades'
+  };
+  return stopNames[stopId];
+}
+
+function getStopPercentage(stopId) {
+  const stopPercentages = {
+    'parada1': '25%',
+    'parada2': '50%',
+    'parada3': '75%',
+    'parada4': '100%'
+  };
+  return stopPercentages[stopId];
+}
+
+function updateMapaButtonVisibility() {
+  const mapaButton = document.getElementById("mapa");
+  if (counterSubject.counter >= 500000000) {
+    mapaButton.style.display = "block";
+    ascenderButton.style.display = "block";
+  } else {
+    mapaButton.style.display = "none";
+    ascenderButton.style.display = "none";
+  }
+
+  // Ensure purchasedStops is defined before accessing it
+  if (counterSubject.purchasedStops) {
+    parada2.style.display = counterSubject.purchasedStops.has('parada1') ? 'block' : 'none';
+    parada3.style.display = counterSubject.purchasedStops.has('parada2') ? 'block' : 'none';
+    parada4.style.display = counterSubject.purchasedStops.has('parada3') ? 'block' : 'none';
+  }
+  if (counterSubject.purchasedStops.has('parada4')){
+    mapaButton.textContent = 'Mapa completo';
+    mapaButton.classList.remove('titilar')
+  }
+}
+
+counterSubject.addObserver(new Observer(
+  () => {
+    updateMapaButtonVisibility(); // Actualizar visibilidad de las paradas
+  },
+  () => {},
+  () => {}
+));
+
+
+// Obtener el modal de 
+const ascenderModal = document.getElementById("ascender-modal");
+
+
+// Cuando el usuario haga clic en el botón, abrir el modal de 
+ascenderButton.addEventListener("click", () => {
+  ascenderModal.style.display = "block";
+});
+
+const closeAscenderModal = ascenderModal.querySelector(".close-modal");
+
+// Cuando el usuario haga clic en <span> (x), cerrar el modal de 
+closeAscenderModal.addEventListener("click", () => {
+  ascenderModal.style.display = "none";
+});
+
+// Cuando el usuario haga clic fuera del modal, cerrarlo
+window.addEventListener("click", (event) => {
+  if (event.target === ascenderModal) {
+    ascenderModal.style.display = "none";
+  }
+});

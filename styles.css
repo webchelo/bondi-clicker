@@ -32,7 +32,7 @@ h2 {
   color: #1565c0;
 }
 
-h2 span {
+#counter-display {
   font-size: 5.5rem;
 }
 
@@ -363,4 +363,140 @@ button.purchasable:disabled {
 
 #modal-text {
   text-align: center;
+}
+
+/* Animación para el botón Ascender */
+@keyframes titilar {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+@keyframes inflar {
+  0% { font-size: 1rem; }
+  50% { font-size: .9rem; }
+  100% { font-size: 1rem; }
+}
+.button2 {
+  height: 4rem;
+
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.titilar {
+  background-color: #1976d2; /* Color de fondo */
+  animation: titilar 1.5s infinite;
+
+}
+
+.titilar span {
+  animation: inflar 1.5s infinite;
+}
+
+.titilar:hover {
+  animation: none; /* Detener la animación al hacer hover */
+  opacity: 1;
+}
+
+/* Estilos para la ventana modal de Ascender */
+#mapa-modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+#mapa-modal .modal-content {
+  position: relative;
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 600px;
+  text-align: center;
+}
+
+#mapa-modal .modal-buttons {
+  position: relative;
+  height: 300px; /* Altura del contenedor de botones */
+}
+
+#mapa-modal .random-button {
+  position: absolute;
+  padding: 10px 20px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+#mapa-modal .random-button:hover {
+  background-color: #1565c0;
+}
+
+#mapa {
+  display: none; /* Ocultar el botón inicialmente */
+}
+
+.modal-buttons {
+  background-image: url('img/mapa.jpg');
+  background-position: center center;
+}
+
+.mapa-purchased {
+  background-color: gold;
+  color: black;
+}
+
+#mapa-modal .mapa-purchased {
+  background-color: gold;
+  color: black;
+}
+
+#mapa-modal .mapa-purchased:hover {
+  background-color: gold;
+}
+
+#paisaje {
+
+  background-position: center center;
+  background-size: cover;
+}
+
+.parada0 {
+  height: 200px;
+  width: 100%;
+  background-image: url('img/parada0.jpg');
+}
+.parada1 {
+  height: 200px;
+  width: 100%;
+  background-image: url('img/parada1.jpg');
+}
+.parada2 {
+  height: 200px;
+  width: 100%;
+  background-image: url('img/parada2.jpg');
+}
+.parada3 {
+  height: 200px;
+  width: 100%;
+  background-image: url('img/parada3.jpg');
+}
+.parada4 {
+  height: 200px;
+  width: 100%;
+  background-image: url('img/parada4.jpg');
 }
