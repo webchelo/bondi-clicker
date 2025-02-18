@@ -1244,8 +1244,8 @@ function applyCasinoReward() {
   const rewards = [
     {
       type: "pasajeros",
-      amount: Math.round(counterSubject.counter * 0.1), // Gana 10% de los pasajeros
-      message: "¡Ganaste el 10% de tus pasajeros en el casino!",
+      amount: Math.round(counterSubject.counter * 1000), // Gana 10% de los pasajeros
+      message: "¡Ganaste muchísimo dinero!",
     },
     {
       type: "nivel",
