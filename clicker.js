@@ -1,16 +1,15 @@
-const currentVersion = gameVersion; // Cambia esto cada vez que actualices tu sitio
-const storedVersion = localStorage.getItem('appVersion');
-
-if (storedVersion !== currentVersion) {
-    localStorage.clear(); // Limpia el localStorage
-    localStorage.setItem('appVersion', currentVersion); // Guarda la nueva versión
-}
-
-let isInitialState = true; // Bandera para controlar el estado inicial
-
 // Variables para el título y versión
 const gameTitle = "Bondi Clicker";
 const gameVersion = "0.0.6";
+
+const storedVersion = localStorage.getItem('appVersion');
+
+if (storedVersion !== gameVersion) {
+    localStorage.clear(); // Limpia el localStorage
+    localStorage.setItem('appVersion', gameVersion); // Guarda la nueva versión
+}
+
+let isInitialState = true; // Bandera para controlar el estado inicial
 
 // Variables para los textos de los botones
 const cobrarBoletoText = "Cobrar Boleto";
