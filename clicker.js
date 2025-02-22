@@ -1408,8 +1408,8 @@ const eventConfigs = [
   { type: "bonus", amount: 5000, getMessage: () => getRandomMessage("largeBonus"), duration: 0 },
   { type: "penalty", amount: 50, getMessage: () => getRandomMessage("smallPenalty"), duration: 0 },
   { type: "penalty", amount: 5000, getMessage: () => getRandomMessage("largePenalty"), duration: 0 },
-  { type: "multiplier", amount: 2, getMessage: () => getRandomMessage("doublePassengers"), duration: 30000},
-  { type: "multiplier", amount: 0.5, getMessage: () => getRandomMessage("halfPassengers"), duration: 30000 }, // Cambiado "half" a 0.5
+  //{ type: "multiplier", amount: 2, getMessage: () => getRandomMessage("doublePassengers"), duration: 30000},
+  //{ type: "multiplier", amount: 0.5, getMessage: () => getRandomMessage("halfPassengers"), duration: 30000 }, // Cambiado "half" a 0.5
   { type: "neutral", amount: 0, getMessage: () => getRandomMessage("neutral"), duration: 0 },
 ];
 
